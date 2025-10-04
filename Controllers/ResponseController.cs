@@ -19,15 +19,19 @@ namespace FormBuilder.API.Controllers
         [HttpPost]
         public async Task<IActionResult> SubmitResponse([FromBody] FormSubmissionDTO submissionDto)
         {
+            
+        if (submissionDto == null)
+        return BadRequest("Submission cannot be null");
+
             var result = await _responseBL.SubmitResponseAsync(submissionDto);
-            return Ok(result);
+            return Ok(new { status = "success", data = result });
         }
 
         [HttpGet("{formId}")]
         public async Task<IActionResult> GetResponsesByForm(int formId)
         {
             var result = await _responseBL.GetResponsesByFormAsync(formId);
-            return Ok(result);
+            return Ok(new { status = "success", data = result });
         }
 
         [HttpGet("{formId}/{responseId}")]
@@ -35,7 +39,7 @@ namespace FormBuilder.API.Controllers
         {
             var result = await _responseBL.GetResponseByIdAsync(formId, responseId);
             if (result == null) return NotFound();
-            return Ok(result);
+            return Ok(new { status = "success", data = result });
         }
     }
 }

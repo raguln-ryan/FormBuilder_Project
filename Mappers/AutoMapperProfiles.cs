@@ -17,6 +17,14 @@ namespace FormBuilder.API.Mappers
             CreateMap<Section, SectionDTO>().ReverseMap();
             CreateMap<Field, FieldDTO>().ReverseMap();
             CreateMap<Response, ResponseDTO>().ReverseMap();
+
+            
+
+            // **Add this mapping for submission**
+            CreateMap<FormSubmissionDTO, Response>()
+    .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+    .ForMember(dest => dest.Id, opt => opt.Ignore());
+
         }
     }
 }
