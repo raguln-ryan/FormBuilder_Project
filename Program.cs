@@ -1,69 +1,100 @@
-using FormBuilder.API.Data;
-using FormBuilder.API.BusinessLayer.Interfaces;
-using FormBuilder.API.BusinessLayer.Implementations;
-using FormBuilder.API.DataAccessLayer.Interfaces;
-using FormBuilder.API.DataAccessLayer.Implementations;
-using FormBuilder.API.Mappers;
-using FormBuilder.API.Middleware;
-using Microsoft.EntityFrameworkCore;
 using FormBuilder.API.Configurations;
-using Microsoft.Extensions.Options;
+using FormBuilder.API.Common.Middleware;
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
+// Add DbContext
+builder.Services.AddDbContext<MySqlDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("MySqlConnection"),
+        new MySqlServerVersion(new Version(8, 0, 32)) // adjust to your MySQL version
+    )
+);
+
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 // AutoMapper
-builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+builder.Services.AddAutoMapper(typeof(FormBuilder.API.Mappings.AutoMapperProfile));
 
-// MySQL DbContext
-builder.Services.AddDbContext<MySqlDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("MySqlConnection"),
-    new MySqlServerVersion(new Version(8, 0, 33))));
+// Custom Dependency Injection
+builder.Services.AddApplicationServices(builder.Configuration);
 
-// MongoDB
-builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoSettings"));
-builder.Services.AddSingleton<MongoDbContext>();
+// JWT Authentication
+var jwtSecret = builder.Configuration["JwtSecret"];
+var key = Encoding.ASCII.GetBytes(jwtSecret);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JwtSecret"]))
+    };
+});
 
-// BusinessLayer
-builder.Services.AddScoped<IFormBL, FormBL>();
-builder.Services.AddScoped<IResponseBL, ResponseBL>();
+// Swagger with JWT Authorization
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FormBuilder API", Version = "v1" });
 
-// DataAccessLayer
-builder.Services.AddScoped<IFormMetadataDAL, FormMetadataDAL>();
-builder.Services.AddScoped<IFormContentDAL, FormContentDAL>();
-builder.Services.AddScoped<IResponseDAL, ResponseDAL>();
+    // Add JWT Authentication to Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference 
+                { 
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer" 
+                }
+            },
+            new string[] { }
+        }
+    });
+});
 
 var app = builder.Build();
 
-// Middleware
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseMiddleware<RequestLoggingMiddleware>();
-
-// Swagger – always enabled
+// Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FormBuilder API V1");
-    c.RoutePrefix = string.Empty; // Swagger at root: https://localhost:5001/
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FormBuilder API v1");
 });
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
+app.UseMiddleware<ExceptionMiddleware>();
 
-using var scope = app.Services.CreateScope();
-var db = scope.ServiceProvider.GetRequiredService<MySqlDbContext>();
-if (db.Database.CanConnect())
-{
-    Console.WriteLine("✅ Connected to MySQL!");
-}
-else
-{
-    Console.WriteLine("❌ Cannot connect to MySQL!");
-}
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();

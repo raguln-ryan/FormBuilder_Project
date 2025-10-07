@@ -2,7 +2,7 @@ namespace FormBuilder.API.Common
 {
     public static class Constants
     {
-        public const string FormCollection = "form_contents";
-        public const string ResponseCollection = "responses";
+        public const string AdminRole = "Admin";
+        public const string LearnerRole = "Learner";
     }
 }

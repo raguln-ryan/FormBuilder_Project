@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using FormBuilder.API.BusinessLayer.Interfaces;
-using FormBuilder.API.DTOs;
+using FormBuilder.API.Business.Interfaces;
+using FormBuilder.API.DTOs.Form;
+using FormBuilder.API.Common;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace FormBuilder.API.Controllers
 {
@@ -8,65 +11,82 @@ namespace FormBuilder.API.Controllers
     [Route("api/[controller]")]
     public class FormController : ControllerBase
     {
-        private readonly IFormBL _formBL;
+        private readonly IFormManager _formManager;
 
-        public FormController(IFormBL formBL)
+        public FormController(IFormManager formManager)
         {
-            _formBL = formBL;
+            _formManager = formManager;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult CreateForm([FromBody] FormLayoutDto dto)
+        {
+            var result = _formManager.CreateForm(dto);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Data);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult UpdateForm(string id, [FromBody] FormLayoutDto dto)
+        {
+            var result = _formManager.UpdateForm(id, dto);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Data);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult DeleteForm(string id)
+        {
+            var result = _formManager.DeleteForm(id);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Message);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllForms()
+        [Authorize]
+        public IActionResult GetAllForms()
         {
-            var result = await _formBL.GetAllFormsAsync();
+            var result = _formManager.GetAllForms(User);
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFormById(int id)
+        [Authorize]
+        public IActionResult GetFormById(string id)
         {
-            var result = await _formBL.GetFormByIdAsync(id);
-            if (result == null) return NotFound();
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateForm([FromBody] FormMetadataDTO formDto)
-        {
-            var result = await _formBL.CreateFormAsync(formDto);
-            return Ok(result);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateForm(int id, [FromBody] FormMetadataDTO formDto)
-        {
-            var result = await _formBL.UpdateFormAsync(id, formDto);
-            if (!result) return NotFound();
-            return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteForm(int id)
-        {
-            var result = await _formBL.DeleteFormAsync(id);
-            if (!result) return NotFound();
-            return Ok(result);
+            var result = _formManager.GetFormById(id, User);
+            if (!result.Success) return NotFound(result.Message);
+            return Ok(result.Data);
         }
 
         [HttpPost("{id}/publish")]
-        public async Task<IActionResult> PublishForm(int id)
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult PublishForm(string id)
         {
-            var result = await _formBL.PublishFormAsync(id);
-            if (!result) return NotFound();
-            return Ok(result);
+            var result = _formManager.PublishForm(id);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Message);
         }
 
-        [HttpPost("{id}/sections")]
-        public async Task<IActionResult> AddSection(int id, [FromBody] SectionDTO sectionDto)
+        [HttpPost("{id}/draft")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult DraftForm(string id)
         {
-            var result = await _formBL.AddSectionAsync(id, sectionDto);
-            if (!result) return NotFound();
-            return Ok(result);
+            var result = _formManager.DraftForm(id);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Message);
+        }
+
+        [HttpGet("{id}/preview")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult PreviewForm(string id)
+        {
+            var result = _formManager.PreviewForm(id);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Data);
         }
     }
 }

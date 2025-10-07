@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using FormBuilder.API.BusinessLayer.Interfaces;
-using FormBuilder.API.BusinessLayer.DTOs;
-using FormBuilder.API.DTOs;
+using FormBuilder.API.Business.Interfaces;
+using FormBuilder.API.DTOs.Form;
+using FormBuilder.API.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FormBuilder.API.Controllers
 {
@@ -9,37 +10,49 @@ namespace FormBuilder.API.Controllers
     [Route("api/[controller]")]
     public class ResponseController : ControllerBase
     {
-        private readonly IResponseBL _responseBL;
+        private readonly IResponseManager _responseManager;
 
-        public ResponseController(IResponseBL responseBL)
+        public ResponseController(IResponseManager responseManager)
         {
-            _responseBL = responseBL;
+            _responseManager = responseManager;
+        }
+        // GET: api/Response/published
+        [HttpGet("published")]
+        [Authorize(Roles = Roles.Learner)]
+        public IActionResult GetPublishedForms()
+        {
+            // This method should fetch only forms where Status = Published
+            var forms = _responseManager.GetPublishedForms(); // You need to implement this in your manager
+            return Ok(forms);
         }
 
+        // Submit answers (Learner only)
         [HttpPost]
-        public async Task<IActionResult> SubmitResponse([FromBody] FormSubmissionDTO submissionDto)
+        [Authorize(Roles = Roles.Learner)]
+        public IActionResult SubmitResponse([FromBody] FormSubmissionDto dto)
         {
-            
-        if (submissionDto == null)
-        return BadRequest("Submission cannot be null");
-
-            var result = await _responseBL.SubmitResponseAsync(submissionDto);
-            return Ok(new { status = "success", data = result });
+            var result = _responseManager.SubmitResponse(dto, User);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Message);
         }
 
-        [HttpGet("{formId}")]
-        public async Task<IActionResult> GetResponsesByForm(int formId)
+        // View all responses for a form (Admin only)
+        [HttpGet("form/{formId}")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult GetResponsesByForm(int formId)  // <-- changed to int
         {
-            var result = await _responseBL.GetResponsesByFormAsync(formId);
-            return Ok(new { status = "success", data = result });
+            var result = _responseManager.GetResponsesByForm(formId);
+            return Ok(result);
         }
 
-        [HttpGet("{formId}/{responseId}")]
-        public async Task<IActionResult> GetResponseById(int formId, string responseId)
+        // View a particular response by its ID (Admin only)
+        [HttpGet("{responseId}")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult GetResponseById(int responseId)  // <-- changed to int
         {
-            var result = await _responseBL.GetResponseByIdAsync(formId, responseId);
-            if (result == null) return NotFound();
-            return Ok(new { status = "success", data = result });
+            var result = _responseManager.GetResponseById(responseId);
+            if (!result.Success) return NotFound(result.Message);
+            return Ok(result.Data);
         }
     }
 }

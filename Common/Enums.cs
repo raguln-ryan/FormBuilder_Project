@@ -1,12 +1,5 @@
-namespace FormBuilder.API.Common
+public static class Roles
 {
-    public enum FieldType
-    {
-        Text,
-        Number,
-        Date,
-        Checkbox,
-        Radio,
-        Dropdown
-    }
+    public const string Admin = "Admin";
+    public const string Learner = "Learner";
 }
