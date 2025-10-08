@@ -25,13 +25,13 @@ namespace FormBuilder.API.Business.Implementations
         {
             var form = new Form
             {
-                Id = Guid.NewGuid().ToString(),
+                // Id is NOT manually assigned; MongoDB will generate ObjectId
                 Title = dto.Title,
                 Description = dto.Description,
                 Status = (FormStatus)dto.Status,
                 Questions = dto.Questions.Select(q => new Question
                 {
-                    Id = q.Id,
+                    // Id is NOT manually assigned; MongoDB will generate ObjectId
                     Text = q.Text,
                     Type = q.Type,
                     Options = q.Options,
@@ -41,7 +41,7 @@ namespace FormBuilder.API.Business.Implementations
             };
 
             _formRepository.Add(form);
-            return (true, "Form created successfully", dto);
+            return (true, "Form created successfully", MapToDto(form));
         }
 
         public (bool Success, string Message, FormLayoutDto? Data) UpdateForm(string id, FormLayoutDto dto)
@@ -57,7 +57,8 @@ namespace FormBuilder.API.Business.Implementations
 
             form.Questions = dto.Questions.Select(q => new Question
             {
-                Id = q.Id,
+                // Id is kept if exists, otherwise MongoDB assigns one
+                Id = q.Id ?? null!,
                 Text = q.Text,
                 Type = q.Type,
                 Options = q.Options,
@@ -67,7 +68,7 @@ namespace FormBuilder.API.Business.Implementations
             }).ToList();
 
             _formRepository.Update(form);
-            return (true, "Form updated successfully", dto);
+            return (true, "Form updated successfully", MapToDto(form));
         }
 
         public (bool Success, string Message) DeleteForm(string id)
