@@ -10,14 +10,12 @@ namespace FormBuilder.API.Business.Interfaces
         // Submit a learner's response
         (bool Success, string Message) SubmitResponse(FormSubmissionDto dto, ClaimsPrincipal user);
 
-        // Changed string -> int
         // View all responses for a form (Admin)
-        object GetResponsesByForm(int formId);
+       IEnumerable<Response> GetResponsesByForm(string formId);
 
-        // Changed string -> int
         // View a particular response by ID (Admin)
-        (bool Success, string Message, object Data) GetResponseById(int responseId);
+        (bool Success, string Message, Response? Data) GetResponseById(string responseId);
         
-        List<FormDto> GetPublishedForms();
+        List<FormLayoutDto> GetPublishedForms();
     }
 }

@@ -6,10 +6,10 @@ namespace FormBuilder.API.DataAccess.Interfaces
     public interface IResponseRepository
     {
         void Add(Response response);
-        Response? GetById(int id);
-        IEnumerable<Response> GetByFormId(int formId);
-        IEnumerable<Response> GetAll();   // <-- new method
+        Response? GetById(string id); // ✅ int
+        IEnumerable<Response> GetByFormId(string formId);
+        IEnumerable<Response> GetAll();
         void Update(Response response);
-        void Delete(int id);
+        void Delete(string id); // ✅ int
     }
 }

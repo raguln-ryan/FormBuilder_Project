@@ -22,7 +22,8 @@ namespace FormBuilder.API.Controllers
         [Authorize(Roles = Roles.Admin)]
         public IActionResult CreateForm([FromBody] FormLayoutDto dto)
         {
-            var result = _formManager.CreateForm(dto);
+            var adminUser = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Admin";
+            var result = _formManager.CreateForm(dto, adminUser);
             if (!result.Success) return BadRequest(result.Message);
             return Ok(result.Data);
         }
@@ -60,24 +61,6 @@ namespace FormBuilder.API.Controllers
             var result = _formManager.GetFormById(id, User);
             if (!result.Success) return NotFound(result.Message);
             return Ok(result.Data);
-        }
-
-        [HttpPost("{id}/publish")]
-        [Authorize(Roles = Roles.Admin)]
-        public IActionResult PublishForm(string id)
-        {
-            var result = _formManager.PublishForm(id);
-            if (!result.Success) return BadRequest(result.Message);
-            return Ok(result.Message);
-        }
-
-        [HttpPost("{id}/draft")]
-        [Authorize(Roles = Roles.Admin)]
-        public IActionResult DraftForm(string id)
-        {
-            var result = _formManager.DraftForm(id);
-            if (!result.Success) return BadRequest(result.Message);
-            return Ok(result.Message);
         }
 
         [HttpGet("{id}/preview")]

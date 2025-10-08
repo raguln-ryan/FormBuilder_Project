@@ -1,43 +1,73 @@
-using FormBuilder.API.DataAccess.Interfaces;
-using FormBuilder.API.Models;
-using FormBuilder.API.DTOs.Form;
-using System.Security.Claims;
 using FormBuilder.API.Business.Interfaces;
+using FormBuilder.API.DataAccess.Interfaces;
+using FormBuilder.API.DTOs.Form;
+using FormBuilder.API.Models;
+using System.Security.Claims;
+using System.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace FormBuilder.API.Business.Implementations
 {
     public class ResponseManager : IResponseManager
     {
-        private readonly IResponseRepository _repo;
-        private readonly IFormRepository _formRepo;
+        private readonly IResponseRepository _responseRepository;
+        private readonly IFormRepository _formRepository;
 
-        public ResponseManager(IResponseRepository repo, IFormRepository formRepo)
+        public ResponseManager(IResponseRepository responseRepository, IFormRepository formRepository)
         {
-            _repo = repo;
-            _formRepo = formRepo;
+            _responseRepository = responseRepository;
+            _formRepository = formRepository;
         }
 
-        public object GetResponsesByForm(int formId)
+        public List<FormLayoutDto> GetPublishedForms()
         {
-            return _repo.GetByFormId(formId);
+            return _formRepository
+                .GetByStatus(FormStatus.Published)
+                .Select(f => new FormLayoutDto
+                {
+                    Title = f.Title,
+                    Description = f.Description,
+                    Status = (FormStatusDto)f.Status,
+                    Questions = f.Questions.Select(q => new QuestionDto
+                    {
+                        Id = q.Id,
+                        Text = q.Text,
+                        Type = q.Type,
+                        Options = q.Options,
+                        CreatedBy = q.CreatedBy,
+                        CreatedAt = q.CreatedAt ?? DateTime.UtcNow,
+                        UpdatedAt = q.UpdatedAt ?? DateTime.UtcNow
+                    }).ToList()
+                }).ToList();
         }
 
-        public (bool Success, string Message, object Data) GetResponseById(int responseId)
-        {
-            var response = _repo.GetById(responseId);
-            if (response == null)
-                return (false, "Response not found", null);
+        public IEnumerable<Response> GetResponsesByForm(string formId) =>
+            _responseRepository.GetByFormId(formId);
 
-            return (true, "Response retrieved", response);
+        public (bool Success, string Message, Response? Data) GetResponseById(string responseId)
+        {
+            var response = _responseRepository.GetById(responseId);
+            return response == null
+                ? (false, "Response not found", null)
+                : (true, "Response retrieved successfully", response);
         }
 
         public (bool Success, string Message) SubmitResponse(FormSubmissionDto dto, ClaimsPrincipal user)
         {
-            // Example: map DTO to Response entity and save
+            var userIdClaim = user.FindFirst("Id")?.Value ?? "0";
+            int userId = int.TryParse(userIdClaim, out int uid) ? uid : 0;
+
+            var form = _formRepository.GetById(dto.FormId);
+            if (form == null) return (false, "Invalid form");
+
+            if (form.Status != FormStatus.Published)
+                return (false, "Cannot submit to an unpublished form");
+
             var response = new Response
             {
                 FormId = dto.FormId,
-                UserId = int.Parse(user.FindFirst("Id")?.Value ?? "0"), // Assuming Claim "Id" is int
+                UserId = userId,
                 SubmittedAt = DateTime.UtcNow,
                 Details = dto.Answers.Select(a => new ResponseDetail
                 {
@@ -46,34 +76,8 @@ namespace FormBuilder.API.Business.Implementations
                 }).ToList()
             };
 
-            _repo.Add(response);
-
-            return (true, "Submitted successfully");
-        }
-
-        // NEW: Get all published forms (Learner)
-      // NEW: Get all published forms (Learner)
-        public List<FormDto> GetPublishedForms()
-        {
-            var forms = _formRepo.GetByStatus(FormStatus.Published)
-                                 .Select(f => new FormDto
-                                 {
-                                     Id = f.Id,
-                                     Title = f.Title,
-                                     Description = f.Description,
-                                     Status = (int)f.Status,
-                                     Questions = f.Questions.Select(q => new QuestionDto
-                                     {
-                                         Id = q.Id,
-                                         Text = q.Text,
-                                         Type = q.Type,
-                                         Options = q.Options,
-                                         CreatedAt = q.CreatedAt,
-                                         UpdatedAt = q.UpdatedAt
-                                     }).ToList()
-                                 })
-                                 .ToList();
-            return forms;
+            _responseRepository.Add(response);
+            return (true, "Response submitted successfully");
         }
     }
 }

@@ -7,6 +7,6 @@ namespace FormBuilder.API.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
     }
 }

@@ -11,7 +11,7 @@ namespace FormBuilder.API.DTOs.Form
 
     public class FormSubmissionDto
     {
-        public int FormId { get; set; }
+        public string FormId { get; set; } = string.Empty;
         public List<QuestionAnswerDto> Answers { get; set; } = new List<QuestionAnswerDto>();
     }
 }

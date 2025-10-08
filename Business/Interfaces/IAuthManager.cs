@@ -4,7 +4,8 @@ namespace FormBuilder.API.Business.Interfaces
 {
     public interface IAuthManager
     {
-        (bool Success, string Message, AuthResponse Data) Register(RegisterRequest request);
-        (bool Success, string Message, AuthResponse Data) Login(LoginRequest request);
+        // AuthResponse can be null if registration/login fails
+        (bool Success, string Message, AuthResponse? Data) Register(RegisterRequest request);
+        (bool Success, string Message, AuthResponse? Data) Login(LoginRequest request);
     }
 }

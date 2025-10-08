@@ -18,23 +18,27 @@ namespace FormBuilder.API.DataAccess.Implementations
         public void Add(Response response)
         {
             _db.Responses.Add(response);
+            _db.SaveChanges(); // Save once to get the generated Response.Id (int)
 
             if (response.Details != null)
             {
                 foreach (var detail in response.Details)
                 {
-                    detail.ResponseId = response.Id;
+                    detail.ResponseId = response.Id; // ✅ ResponseId is int
                     _db.ResponseDetails.Add(detail);
                 }
-            }
 
-            _db.SaveChanges();
+                _db.SaveChanges();
+            }
         }
 
-        public Response? GetById(int id)
+        public Response? GetById(string id)
         {
+            if (!int.TryParse(id, out int intId))
+                return null; // invalid ID
+
             return _db.Responses
-                      .Where(r => r.Id == id)
+                      .Where(r => r.Id == intId) // now both are int
                       .Select(r => new Response
                       {
                           Id = r.Id,
@@ -47,11 +51,11 @@ namespace FormBuilder.API.DataAccess.Implementations
                       })
                       .FirstOrDefault();
         }
-
-        public IEnumerable<Response> GetByFormId(int formId)
+        public IEnumerable<Response> GetByFormId(string formId)
         {
+            // No parsing needed
             return _db.Responses
-                      .Where(r => r.FormId == formId)
+                      .Where(r => r.FormId == formId) // compare string to string
                       .Select(r => new Response
                       {
                           Id = r.Id,
@@ -65,7 +69,6 @@ namespace FormBuilder.API.DataAccess.Implementations
                       .ToList();
         }
 
-        // ✅ Implement the new GetAll method
         public IEnumerable<Response> GetAll()
         {
             return _db.Responses
@@ -97,8 +100,10 @@ namespace FormBuilder.API.DataAccess.Implementations
             _db.SaveChanges();
         }
 
-        public void Delete(int id)
+        public void Delete(string id)
         {
+            if (!int.TryParse(id, out int intId)) return;
+
             var response = GetById(id);
             if (response != null)
             {
@@ -111,5 +116,6 @@ namespace FormBuilder.API.DataAccess.Implementations
                 _db.SaveChanges();
             }
         }
+
     }
 }

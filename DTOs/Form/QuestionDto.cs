@@ -9,7 +9,8 @@ namespace FormBuilder.API.DTOs.Form
         public string Text { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public List<string> Options { get; set; } = new List<string>();
-        public DateTime? CreatedAt { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
     }
 }

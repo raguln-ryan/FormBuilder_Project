@@ -16,17 +16,15 @@ namespace FormBuilder.API.Controllers
         {
             _responseManager = responseManager;
         }
-        // GET: api/Response/published
+
         [HttpGet("published")]
         [Authorize(Roles = Roles.Learner)]
         public IActionResult GetPublishedForms()
         {
-            // This method should fetch only forms where Status = Published
-            var forms = _responseManager.GetPublishedForms(); // You need to implement this in your manager
+            var forms = _responseManager.GetPublishedForms();
             return Ok(forms);
         }
 
-        // Submit answers (Learner only)
         [HttpPost]
         [Authorize(Roles = Roles.Learner)]
         public IActionResult SubmitResponse([FromBody] FormSubmissionDto dto)
@@ -36,19 +34,17 @@ namespace FormBuilder.API.Controllers
             return Ok(result.Message);
         }
 
-        // View all responses for a form (Admin only)
-        [HttpGet("form/{formId}")]
+        [HttpGet("form/{formId}/responses")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult GetResponsesByForm(int formId)  // <-- changed to int
+        public IActionResult GetResponsesByForm(string formId)
         {
             var result = _responseManager.GetResponsesByForm(formId);
             return Ok(result);
         }
 
-        // View a particular response by its ID (Admin only)
         [HttpGet("{responseId}")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult GetResponseById(int responseId)  // <-- changed to int
+        public IActionResult GetResponseById(string responseId)
         {
             var result = _responseManager.GetResponseById(responseId);
             if (!result.Success) return NotFound(result.Message);
