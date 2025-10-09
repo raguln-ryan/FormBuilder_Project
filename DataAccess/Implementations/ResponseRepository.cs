@@ -17,20 +17,17 @@ namespace FormBuilder.API.DataAccess.Implementations
 
         public void Add(Response response)
         {
+            if (response == null)
+                throw new ArgumentNullException(nameof(response));
+
+            // EF Core will automatically handle the Details list
+            // and set ResponseId for each ResponseDetail
             _db.Responses.Add(response);
-            _db.SaveChanges(); // Save once to get the generated Response.Id (int)
 
-            if (response.Details != null)
-            {
-                foreach (var detail in response.Details)
-                {
-                    detail.ResponseId = response.Id; // ✅ ResponseId is int
-                    _db.ResponseDetails.Add(detail);
-                }
-
-                _db.SaveChanges();
-            }
+            // Save everything in a single transaction
+            _db.SaveChanges();
         }
+
 
         public Response? GetById(string id)
         {

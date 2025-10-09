@@ -55,29 +55,54 @@ namespace FormBuilder.API.Business.Implementations
 
         public (bool Success, string Message) SubmitResponse(FormSubmissionDto dto, ClaimsPrincipal user)
         {
-            var userIdClaim = user.FindFirst("Id")?.Value ?? "0";
-            int userId = int.TryParse(userIdClaim, out int uid) ? uid : 0;
+            // 1️⃣ Extract UserId from JWT
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                              ?? user.FindFirst("nameId")?.Value;
 
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId) || userId <= 0)
+                return (false, "Invalid user ID.");
+
+            // 2️⃣ Validate form exists
             var form = _formRepository.GetById(dto.FormId);
-            if (form == null) return (false, "Invalid form");
+            if (form == null)
+                return (false, "Invalid form ID.");
 
+            // 3️⃣ Validate form is published
             if (form.Status != FormStatus.Published)
-                return (false, "Cannot submit to an unpublished form");
+                return (false, "Cannot submit to an unpublished form.");
 
+            // 4️⃣ Validate answers
+            if (dto.Answers == null || !dto.Answers.Any())
+                return (false, "No answers provided.");
+            var responseDetails = dto.Answers.Select(a => new ResponseDetail
+            {
+                QuestionId = a.QuestionId,
+                Answer = a.Answer
+            }).ToList();
+
+            // ✅ 5️⃣ Map answers to ResponseDetails and create Response
             var response = new Response
             {
                 FormId = dto.FormId,
                 UserId = userId,
                 SubmittedAt = DateTime.UtcNow,
-                Details = dto.Answers.Select(a => new ResponseDetail
-                {
-                    QuestionId = a.QuestionId,
-                    Answer = a.Answer
-                }).ToList()
+                Details = responseDetails
+               
             };
+            
 
-            _responseRepository.Add(response);
-            return (true, "Response submitted successfully");
+            // 6️⃣ Save to database
+            try
+            {
+                _responseRepository.Add(response); // EF handles IDs automatically
+                return (true, "Response submitted successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.InnerException?.Message ?? ex.Message);
+            }
         }
+
+
     }
 }

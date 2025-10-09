@@ -6,7 +6,7 @@ namespace FormBuilder.API.Models
     {
        
 
-        [ForeignKey("Response")]
+        
         public int ResponseId { get; set; } // FK to Response table
 
         // MongoDB question ID remains string
