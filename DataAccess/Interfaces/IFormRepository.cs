@@ -11,5 +11,8 @@ namespace FormBuilder.API.DataAccess.Interfaces
         IEnumerable<Form> GetByStatus(FormStatus status);
         void Update(Form form);
         void Delete(string id);
+
+        // ✅ Add this
+        void DeleteFormAndResponses(string formId, IResponseRepository responseRepository);
     }
 }

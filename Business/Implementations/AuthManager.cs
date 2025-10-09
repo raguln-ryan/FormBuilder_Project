@@ -21,76 +21,76 @@ namespace FormBuilder.API.Business.Implementations
         }
 
         public (bool Success, string Message, AuthResponse? Data) Register(RegisterRequest request)
-{
-    if (request.Role == Roles.Admin)
-        return (false, "Admin cannot register via API", null);
-
-    var existingUser = _userRepository.GetByEmail(request.Email);
-    if (existingUser != null)
-        return (false, "Email already exists", null);
-
-    var user = new User
-    {
-        Name = request.Name,
-        Email = request.Email,
-        Role = request.Role,
-        PasswordHash = _passwordHasher.HashPassword(request.Password) // ✅ required set
-    };
-
-    _userRepository.Add(user);
-
-    var token = _jwtService.GenerateToken(user);
-
-    return (true, "User registered successfully", new AuthResponse
-    {
-        Token = token,
-        UserId = user.Id.ToString(),
-        Name = user.Name,
-        Role = user.Role
-    });
-}
-
-public (bool Success, string Message, AuthResponse? Data) Login(LoginRequest request)
-{
-    var user = _userRepository.GetByEmail(request.Email);
-
-    // Hardcoded Admin check
-    if (user == null && request.Email == "admin@example.com" && request.Password == "Admin@123")
-    {
-        var adminUser = new User
         {
-            Id = 0,
-            Name = "Admin",
-            Email = "admin@example.com",
-            Role = Roles.Admin,
-            PasswordHash = _passwordHasher.HashPassword("Admin@123") // ✅ generate hash even for hardcoded admin
-        };
+            if (request.Role == Roles.Admin)
+                return (false, "Admin cannot register via API", null);
 
-        return (true, "Login successful", new AuthResponse
+            var existingUser = _userRepository.GetByEmail(request.Email);
+            if (existingUser != null)
+                return (false, "Email already exists", null);
+
+            var user = new User
+            {
+                Name = request.Name,
+                Email = request.Email,
+                Role = request.Role,
+                PasswordHash = _passwordHasher.HashPassword(request.Password) // ✅ required set
+            };
+
+            _userRepository.Add(user);
+
+            var token = _jwtService.GenerateToken(user);
+
+            return (true, "User registered successfully", new AuthResponse
+            {
+                Token = token,
+                UserId = user.Id.ToString(),
+                Name = user.Name,
+                Role = user.Role
+            });
+        }
+
+        public (bool Success, string Message, AuthResponse? Data) Login(LoginRequest request)
         {
-            Token = _jwtService.GenerateToken(adminUser),
-            UserId = "0",
-            Name = "Admin",
-            Role = Roles.Admin
-        });
-    }
+            var user = _userRepository.GetByEmail(request.Email);
 
-    if (user == null)
-        return (false, "User not found", null);
+            // Hardcoded Admin check
+            if (user == null && request.Email == "admin@example.com" && request.Password == "Admin@123")
+            {
+                var adminUser = new User
+                {
+                    Id = 0,
+                    Name = "Admin",
+                    Email = "admin@example.com",
+                    Role = Roles.Admin,
+                    PasswordHash = _passwordHasher.HashPassword("Admin@123") // ✅ generate hash even for hardcoded admin
+                };
 
-    if (!_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
-        return (false, "Invalid credentials", null);
+                return (true, "Login successful", new AuthResponse
+                {
+                    Token = _jwtService.GenerateToken(adminUser),
+                    UserId = "0",
+                    Name = "Admin",
+                    Role = Roles.Admin
+                });
+            }
 
-    var token = _jwtService.GenerateToken(user);
+            if (user == null)
+                return (false, "User not found", null);
 
-    return (true, "Login successful", new AuthResponse
-    {
-        Token = token,
-        UserId = user.Id.ToString(),
-        Name = user.Name,
-        Role = user.Role
-    });
-}
+            if (!_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
+                return (false, "Invalid credentials", null);
+
+            var token = _jwtService.GenerateToken(user);
+
+            return (true, "Login successful", new AuthResponse
+            {
+                Token = token,
+                UserId = user.Id.ToString(),
+                Name = user.Name,
+                Role = user.Role
+            });
+        }
 
     }
 }

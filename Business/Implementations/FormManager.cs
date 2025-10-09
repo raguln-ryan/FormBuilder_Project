@@ -15,10 +15,13 @@ namespace FormBuilder.API.Business.Implementations
         private readonly IFormRepository _formRepository;
         private readonly IQuestionRepository _questionRepository;
 
-        public FormManager(IFormRepository formRepository, IQuestionRepository questionRepository)
+        private readonly IResponseRepository _responseRepository;
+
+        public FormManager(IFormRepository formRepository, IQuestionRepository questionRepository, IResponseRepository responseRepository)
         {
             _formRepository = formRepository;
             _questionRepository = questionRepository;
+            _responseRepository = responseRepository;
         }
 
         public (bool Success, string Message, FormLayoutDto? Data) CreateForm(FormLayoutDto dto, string adminUser)
@@ -76,9 +79,17 @@ namespace FormBuilder.API.Business.Implementations
             var form = _formRepository.GetById(id);
             if (form == null) return (false, "Form not found");
 
-            _formRepository.Delete(id);
-            return (true, "Form deleted successfully");
+            try
+            {
+                _formRepository.DeleteFormAndResponses(id, _responseRepository);
+                return (true, "Form and all responses deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
         }
+
 
         public object GetAllForms(ClaimsPrincipal user)
         {
