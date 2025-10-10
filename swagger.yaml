@@ -1,0 +1,297 @@
+openapi: 3.0.1
+info:
+  title: FormBuilder API
+  version: v1
+paths:
+  /api/Auth/register:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: OK
+  /api/Auth/login:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+  /api/Form:
+    post:
+      tags:
+        - Form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormLayoutDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/FormLayoutDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/FormLayoutDto'
+      responses:
+        '200':
+          description: OK
+    get:
+      tags:
+        - Form
+      responses:
+        '200':
+          description: OK
+  '/api/Form/{id}':
+    put:
+      tags:
+        - Form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormLayoutDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/FormLayoutDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/FormLayoutDto'
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+        - Form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    get:
+      tags:
+        - Form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  '/api/Form/{id}/preview':
+    get:
+      tags:
+        - Form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /api/Response/published:
+    get:
+      tags:
+        - Response
+      responses:
+        '200':
+          description: OK
+  /api/Response:
+    post:
+      tags:
+        - Response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormSubmissionDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/FormSubmissionDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/FormSubmissionDto'
+      responses:
+        '200':
+          description: OK
+  '/api/Response/form/{formId}/responses':
+    get:
+      tags:
+        - Response
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  '/api/Response/{responseId}':
+    get:
+      tags:
+        - Response
+      parameters:
+        - name: responseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    FormLayoutDto:
+      required:
+        - description
+        - title
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/FormStatusDto'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionDto'
+          nullable: true
+      additionalProperties: false
+    FormStatusDto:
+      enum:
+        - 0
+        - 1
+      type: integer
+      format: int32
+    FormSubmissionDto:
+      type: object
+      properties:
+        formId:
+          type: string
+          nullable: true
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionAnswerDto'
+          nullable: true
+      additionalProperties: false
+    LoginRequest:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+      additionalProperties: false
+    QuestionAnswerDto:
+      type: object
+      properties:
+        questionId:
+          type: string
+          nullable: true
+        answer:
+          type: string
+          nullable: true
+      additionalProperties: false
+    QuestionDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        text:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
+        options:
+          type: array
+          items:
+            type: string
+          nullable: true
+        createdBy:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+      additionalProperties: false
+    RegisterRequest:
+      required:
+        - email
+        - name
+        - password
+        - role
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+        role:
+          type: string
+          nullable: true
+      additionalProperties: false
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"'
+      name: Authorization
+      in: header
+security:
+  - Bearer: [ ]

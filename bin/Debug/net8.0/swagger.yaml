@@ -1,0 +1,2506 @@
+workspace: 
+info:
+  title: FormBuilder API
+  description: API documentation for FormBuilder backend.
+  version: v1
+  termsOfService: 
+  contact: 
+  license: 
+  extensions: {}
+servers: []
+paths:
+  /api/Auth/register:
+    summary: 
+    description: 
+    operations:
+      Post:
+        tags:
+        - name: Auth
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters: []
+        requestBody:
+          unresolvedReference: false
+          reference: 
+          description: 
+          required: false
+          content:
+            application/json:
+              schema: &o0
+                title: 
+                type: 
+                format: 
+                description: 
+                maximum: 
+                exclusiveMaximum: 
+                minimum: 
+                exclusiveMinimum: 
+                maxLength: 
+                minLength: 
+                pattern: 
+                multipleOf: 
+                default: 
+                readOnly: false
+                writeOnly: false
+                allOf: []
+                oneOf: []
+                anyOf: []
+                not: 
+                required: []
+                items: 
+                maxItems: 
+                minItems: 
+                uniqueItems: 
+                properties: {}
+                maxProperties: 
+                minProperties: 
+                additionalPropertiesAllowed: true
+                additionalProperties: 
+                discriminator: 
+                example: 
+                enum: []
+                nullable: false
+                externalDocs: 
+                deprecated: false
+                xml: 
+                extensions: {}
+                unresolvedReference: false
+                reference:
+                  isFragrament: false
+                  externalResource: 
+                  type: Schema
+                  id: RegisterRequest
+                  isExternal: false
+                  isLocal: true
+                  hostDocument: 
+                  referenceV3: '#/components/schemas/RegisterRequest'
+                  referenceV2: '#/definitions/RegisterRequest'
+                annotations: 
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            text/json:
+              schema: *o0
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            application/*+json:
+              schema: *o0
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+          extensions: {}
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Auth/login:
+    summary: 
+    description: 
+    operations:
+      Post:
+        tags:
+        - name: Auth
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters: []
+        requestBody:
+          unresolvedReference: false
+          reference: 
+          description: 
+          required: false
+          content:
+            application/json:
+              schema: &o1
+                title: 
+                type: 
+                format: 
+                description: 
+                maximum: 
+                exclusiveMaximum: 
+                minimum: 
+                exclusiveMinimum: 
+                maxLength: 
+                minLength: 
+                pattern: 
+                multipleOf: 
+                default: 
+                readOnly: false
+                writeOnly: false
+                allOf: []
+                oneOf: []
+                anyOf: []
+                not: 
+                required: []
+                items: 
+                maxItems: 
+                minItems: 
+                uniqueItems: 
+                properties: {}
+                maxProperties: 
+                minProperties: 
+                additionalPropertiesAllowed: true
+                additionalProperties: 
+                discriminator: 
+                example: 
+                enum: []
+                nullable: false
+                externalDocs: 
+                deprecated: false
+                xml: 
+                extensions: {}
+                unresolvedReference: false
+                reference:
+                  isFragrament: false
+                  externalResource: 
+                  type: Schema
+                  id: LoginRequest
+                  isExternal: false
+                  isLocal: true
+                  hostDocument: 
+                  referenceV3: '#/components/schemas/LoginRequest'
+                  referenceV2: '#/definitions/LoginRequest'
+                annotations: 
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            text/json:
+              schema: *o1
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            application/*+json:
+              schema: *o1
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+          extensions: {}
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Form:
+    summary: 
+    description: 
+    operations:
+      Post:
+        tags:
+        - name: Form
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters: []
+        requestBody:
+          unresolvedReference: false
+          reference: 
+          description: 
+          required: false
+          content:
+            application/json:
+              schema: &o2
+                title: 
+                type: 
+                format: 
+                description: 
+                maximum: 
+                exclusiveMaximum: 
+                minimum: 
+                exclusiveMinimum: 
+                maxLength: 
+                minLength: 
+                pattern: 
+                multipleOf: 
+                default: 
+                readOnly: false
+                writeOnly: false
+                allOf: []
+                oneOf: []
+                anyOf: []
+                not: 
+                required: []
+                items: 
+                maxItems: 
+                minItems: 
+                uniqueItems: 
+                properties: {}
+                maxProperties: 
+                minProperties: 
+                additionalPropertiesAllowed: true
+                additionalProperties: 
+                discriminator: 
+                example: 
+                enum: []
+                nullable: false
+                externalDocs: 
+                deprecated: false
+                xml: 
+                extensions: {}
+                unresolvedReference: false
+                reference:
+                  isFragrament: false
+                  externalResource: 
+                  type: Schema
+                  id: FormLayoutDto
+                  isExternal: false
+                  isLocal: true
+                  hostDocument: 
+                  referenceV3: '#/components/schemas/FormLayoutDto'
+                  referenceV2: '#/definitions/FormLayoutDto'
+                annotations: 
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            text/json:
+              schema: *o2
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            application/*+json:
+              schema: *o2
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+          extensions: {}
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+      Get:
+        tags:
+        - name: Form
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters: []
+        requestBody: 
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Form/{id}:
+    summary: 
+    description: 
+    operations:
+      Put:
+        tags:
+        - name: Form
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters:
+        - style: Simple
+          unresolvedReference: false
+          reference: 
+          name: id
+          in: Path
+          description: 
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          style: Simple
+          explode: false
+          allowReserved: false
+          schema:
+            title: 
+            type: string
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+            annotations: 
+          examples: {}
+          example: 
+          content: {}
+          extensions: {}
+        requestBody:
+          unresolvedReference: false
+          reference: 
+          description: 
+          required: false
+          content:
+            application/json:
+              schema: &o3
+                title: 
+                type: 
+                format: 
+                description: 
+                maximum: 
+                exclusiveMaximum: 
+                minimum: 
+                exclusiveMinimum: 
+                maxLength: 
+                minLength: 
+                pattern: 
+                multipleOf: 
+                default: 
+                readOnly: false
+                writeOnly: false
+                allOf: []
+                oneOf: []
+                anyOf: []
+                not: 
+                required: []
+                items: 
+                maxItems: 
+                minItems: 
+                uniqueItems: 
+                properties: {}
+                maxProperties: 
+                minProperties: 
+                additionalPropertiesAllowed: true
+                additionalProperties: 
+                discriminator: 
+                example: 
+                enum: []
+                nullable: false
+                externalDocs: 
+                deprecated: false
+                xml: 
+                extensions: {}
+                unresolvedReference: false
+                reference:
+                  isFragrament: false
+                  externalResource: 
+                  type: Schema
+                  id: FormLayoutDto
+                  isExternal: false
+                  isLocal: true
+                  hostDocument: 
+                  referenceV3: '#/components/schemas/FormLayoutDto'
+                  referenceV2: '#/definitions/FormLayoutDto'
+                annotations: 
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            text/json:
+              schema: *o3
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            application/*+json:
+              schema: *o3
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+          extensions: {}
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+      Delete:
+        tags:
+        - name: Form
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters:
+        - style: Simple
+          unresolvedReference: false
+          reference: 
+          name: id
+          in: Path
+          description: 
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          style: Simple
+          explode: false
+          allowReserved: false
+          schema:
+            title: 
+            type: string
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+            annotations: 
+          examples: {}
+          example: 
+          content: {}
+          extensions: {}
+        requestBody: 
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+      Get:
+        tags:
+        - name: Form
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters:
+        - style: Simple
+          unresolvedReference: false
+          reference: 
+          name: id
+          in: Path
+          description: 
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          style: Simple
+          explode: false
+          allowReserved: false
+          schema:
+            title: 
+            type: string
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+            annotations: 
+          examples: {}
+          example: 
+          content: {}
+          extensions: {}
+        requestBody: 
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Form/{id}/preview:
+    summary: 
+    description: 
+    operations:
+      Get:
+        tags:
+        - name: Form
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters:
+        - style: Simple
+          unresolvedReference: false
+          reference: 
+          name: id
+          in: Path
+          description: 
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          style: Simple
+          explode: false
+          allowReserved: false
+          schema:
+            title: 
+            type: string
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+            annotations: 
+          examples: {}
+          example: 
+          content: {}
+          extensions: {}
+        requestBody: 
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Response/published:
+    summary: 
+    description: 
+    operations:
+      Get:
+        tags:
+        - name: Response
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters: []
+        requestBody: 
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Response:
+    summary: 
+    description: 
+    operations:
+      Post:
+        tags:
+        - name: Response
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters: []
+        requestBody:
+          unresolvedReference: false
+          reference: 
+          description: 
+          required: false
+          content:
+            application/json:
+              schema: &o4
+                title: 
+                type: 
+                format: 
+                description: 
+                maximum: 
+                exclusiveMaximum: 
+                minimum: 
+                exclusiveMinimum: 
+                maxLength: 
+                minLength: 
+                pattern: 
+                multipleOf: 
+                default: 
+                readOnly: false
+                writeOnly: false
+                allOf: []
+                oneOf: []
+                anyOf: []
+                not: 
+                required: []
+                items: 
+                maxItems: 
+                minItems: 
+                uniqueItems: 
+                properties: {}
+                maxProperties: 
+                minProperties: 
+                additionalPropertiesAllowed: true
+                additionalProperties: 
+                discriminator: 
+                example: 
+                enum: []
+                nullable: false
+                externalDocs: 
+                deprecated: false
+                xml: 
+                extensions: {}
+                unresolvedReference: false
+                reference:
+                  isFragrament: false
+                  externalResource: 
+                  type: Schema
+                  id: FormSubmissionDto
+                  isExternal: false
+                  isLocal: true
+                  hostDocument: 
+                  referenceV3: '#/components/schemas/FormSubmissionDto'
+                  referenceV2: '#/definitions/FormSubmissionDto'
+                annotations: 
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            text/json:
+              schema: *o4
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+            application/*+json:
+              schema: *o4
+              example: 
+              examples: {}
+              encoding: {}
+              extensions: {}
+          extensions: {}
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Response/form/{formId}/responses:
+    summary: 
+    description: 
+    operations:
+      Get:
+        tags:
+        - name: Response
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters:
+        - style: Simple
+          unresolvedReference: false
+          reference: 
+          name: formId
+          in: Path
+          description: 
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          style: Simple
+          explode: false
+          allowReserved: false
+          schema:
+            title: 
+            type: string
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+            annotations: 
+          examples: {}
+          example: 
+          content: {}
+          extensions: {}
+        requestBody: 
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+  /api/Response/{responseId}:
+    summary: 
+    description: 
+    operations:
+      Get:
+        tags:
+        - name: Response
+          description: 
+          externalDocs: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+        summary: 
+        description: 
+        externalDocs: 
+        operationId: 
+        parameters:
+        - style: Simple
+          unresolvedReference: false
+          reference: 
+          name: responseId
+          in: Path
+          description: 
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          style: Simple
+          explode: false
+          allowReserved: false
+          schema:
+            title: 
+            type: string
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+            annotations: 
+          examples: {}
+          example: 
+          content: {}
+          extensions: {}
+        requestBody: 
+        responses:
+          200:
+            description: OK
+            headers: {}
+            content: {}
+            links: {}
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+        callbacks: {}
+        deprecated: false
+        security: []
+        servers: []
+        extensions: {}
+        annotations: 
+    servers: []
+    parameters: []
+    extensions: {}
+    unresolvedReference: false
+    reference: 
+components:
+  schemas:
+    FormLayoutDto:
+      title: 
+      type: object
+      format: 
+      description: 
+      maximum: 
+      exclusiveMaximum: 
+      minimum: 
+      exclusiveMinimum: 
+      maxLength: 
+      minLength: 
+      pattern: 
+      multipleOf: 
+      default: 
+      readOnly: false
+      writeOnly: false
+      allOf: []
+      oneOf: []
+      anyOf: []
+      not: 
+      required:
+      - description
+      - title
+      items: 
+      maxItems: 
+      minItems: 
+      uniqueItems: 
+      properties:
+        title:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        description:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        status:
+          title: 
+          type: 
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: false
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference:
+            isFragrament: false
+            externalResource: 
+            type: Schema
+            id: FormStatusDto
+            isExternal: false
+            isLocal: true
+            hostDocument: 
+            referenceV3: '#/components/schemas/FormStatusDto'
+            referenceV2: '#/definitions/FormStatusDto'
+          annotations: 
+        questions:
+          title: 
+          type: array
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items:
+            title: 
+            type: 
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference:
+              isFragrament: false
+              externalResource: 
+              type: Schema
+              id: QuestionDto
+              isExternal: false
+              isLocal: true
+              hostDocument: 
+              referenceV3: '#/components/schemas/QuestionDto'
+              referenceV2: '#/definitions/QuestionDto'
+            annotations: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+      maxProperties: 
+      minProperties: 
+      additionalPropertiesAllowed: false
+      additionalProperties: 
+      discriminator: 
+      example: 
+      enum: []
+      nullable: false
+      externalDocs: 
+      deprecated: false
+      xml: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+      annotations: 
+    FormStatusDto:
+      title: 
+      type: integer
+      format: int32
+      description: 
+      maximum: 
+      exclusiveMaximum: 
+      minimum: 
+      exclusiveMinimum: 
+      maxLength: 
+      minLength: 
+      pattern: 
+      multipleOf: 
+      default: 
+      readOnly: false
+      writeOnly: false
+      allOf: []
+      oneOf: []
+      anyOf: []
+      not: 
+      required: []
+      items: 
+      maxItems: 
+      minItems: 
+      uniqueItems: 
+      properties: {}
+      maxProperties: 
+      minProperties: 
+      additionalPropertiesAllowed: true
+      additionalProperties: 
+      discriminator: 
+      example: 
+      enum:
+      - primitiveType: Integer
+        anyType: Primitive
+        value: 0
+      - primitiveType: Integer
+        anyType: Primitive
+        value: 1
+      nullable: false
+      externalDocs: 
+      deprecated: false
+      xml: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+      annotations: 
+    FormSubmissionDto:
+      title: 
+      type: object
+      format: 
+      description: 
+      maximum: 
+      exclusiveMaximum: 
+      minimum: 
+      exclusiveMinimum: 
+      maxLength: 
+      minLength: 
+      pattern: 
+      multipleOf: 
+      default: 
+      readOnly: false
+      writeOnly: false
+      allOf: []
+      oneOf: []
+      anyOf: []
+      not: 
+      required: []
+      items: 
+      maxItems: 
+      minItems: 
+      uniqueItems: 
+      properties:
+        formId:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        answers:
+          title: 
+          type: array
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items:
+            title: 
+            type: 
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference:
+              isFragrament: false
+              externalResource: 
+              type: Schema
+              id: QuestionAnswerDto
+              isExternal: false
+              isLocal: true
+              hostDocument: 
+              referenceV3: '#/components/schemas/QuestionAnswerDto'
+              referenceV2: '#/definitions/QuestionAnswerDto'
+            annotations: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+      maxProperties: 
+      minProperties: 
+      additionalPropertiesAllowed: false
+      additionalProperties: 
+      discriminator: 
+      example: 
+      enum: []
+      nullable: false
+      externalDocs: 
+      deprecated: false
+      xml: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+      annotations: 
+    LoginRequest:
+      title: 
+      type: object
+      format: 
+      description: 
+      maximum: 
+      exclusiveMaximum: 
+      minimum: 
+      exclusiveMinimum: 
+      maxLength: 
+      minLength: 
+      pattern: 
+      multipleOf: 
+      default: 
+      readOnly: false
+      writeOnly: false
+      allOf: []
+      oneOf: []
+      anyOf: []
+      not: 
+      required:
+      - email
+      - password
+      items: 
+      maxItems: 
+      minItems: 
+      uniqueItems: 
+      properties:
+        email:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        password:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+      maxProperties: 
+      minProperties: 
+      additionalPropertiesAllowed: false
+      additionalProperties: 
+      discriminator: 
+      example: 
+      enum: []
+      nullable: false
+      externalDocs: 
+      deprecated: false
+      xml: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+      annotations: 
+    QuestionAnswerDto:
+      title: 
+      type: object
+      format: 
+      description: 
+      maximum: 
+      exclusiveMaximum: 
+      minimum: 
+      exclusiveMinimum: 
+      maxLength: 
+      minLength: 
+      pattern: 
+      multipleOf: 
+      default: 
+      readOnly: false
+      writeOnly: false
+      allOf: []
+      oneOf: []
+      anyOf: []
+      not: 
+      required: []
+      items: 
+      maxItems: 
+      minItems: 
+      uniqueItems: 
+      properties:
+        questionId:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        answer:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+      maxProperties: 
+      minProperties: 
+      additionalPropertiesAllowed: false
+      additionalProperties: 
+      discriminator: 
+      example: 
+      enum: []
+      nullable: false
+      externalDocs: 
+      deprecated: false
+      xml: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+      annotations: 
+    QuestionDto:
+      title: 
+      type: object
+      format: 
+      description: 
+      maximum: 
+      exclusiveMaximum: 
+      minimum: 
+      exclusiveMinimum: 
+      maxLength: 
+      minLength: 
+      pattern: 
+      multipleOf: 
+      default: 
+      readOnly: false
+      writeOnly: false
+      allOf: []
+      oneOf: []
+      anyOf: []
+      not: 
+      required: []
+      items: 
+      maxItems: 
+      minItems: 
+      uniqueItems: 
+      properties:
+        id:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        text:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        type:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        options:
+          title: 
+          type: array
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items:
+            title: 
+            type: string
+            format: 
+            description: 
+            maximum: 
+            exclusiveMaximum: 
+            minimum: 
+            exclusiveMinimum: 
+            maxLength: 
+            minLength: 
+            pattern: 
+            multipleOf: 
+            default: 
+            readOnly: false
+            writeOnly: false
+            allOf: []
+            oneOf: []
+            anyOf: []
+            not: 
+            required: []
+            items: 
+            maxItems: 
+            minItems: 
+            uniqueItems: 
+            properties: {}
+            maxProperties: 
+            minProperties: 
+            additionalPropertiesAllowed: true
+            additionalProperties: 
+            discriminator: 
+            example: 
+            enum: []
+            nullable: false
+            externalDocs: 
+            deprecated: false
+            xml: 
+            extensions: {}
+            unresolvedReference: false
+            reference: 
+            annotations: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        createdBy:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        createdAt:
+          title: 
+          type: string
+          format: date-time
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: false
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        updatedAt:
+          title: 
+          type: string
+          format: date-time
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+      maxProperties: 
+      minProperties: 
+      additionalPropertiesAllowed: false
+      additionalProperties: 
+      discriminator: 
+      example: 
+      enum: []
+      nullable: false
+      externalDocs: 
+      deprecated: false
+      xml: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+      annotations: 
+    RegisterRequest:
+      title: 
+      type: object
+      format: 
+      description: 
+      maximum: 
+      exclusiveMaximum: 
+      minimum: 
+      exclusiveMinimum: 
+      maxLength: 
+      minLength: 
+      pattern: 
+      multipleOf: 
+      default: 
+      readOnly: false
+      writeOnly: false
+      allOf: []
+      oneOf: []
+      anyOf: []
+      not: 
+      required:
+      - email
+      - name
+      - password
+      - role
+      items: 
+      maxItems: 
+      minItems: 
+      uniqueItems: 
+      properties:
+        name:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        email:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        password:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+        role:
+          title: 
+          type: string
+          format: 
+          description: 
+          maximum: 
+          exclusiveMaximum: 
+          minimum: 
+          exclusiveMinimum: 
+          maxLength: 
+          minLength: 
+          pattern: 
+          multipleOf: 
+          default: 
+          readOnly: false
+          writeOnly: false
+          allOf: []
+          oneOf: []
+          anyOf: []
+          not: 
+          required: []
+          items: 
+          maxItems: 
+          minItems: 
+          uniqueItems: 
+          properties: {}
+          maxProperties: 
+          minProperties: 
+          additionalPropertiesAllowed: true
+          additionalProperties: 
+          discriminator: 
+          example: 
+          enum: []
+          nullable: true
+          externalDocs: 
+          deprecated: false
+          xml: 
+          extensions: {}
+          unresolvedReference: false
+          reference: 
+          annotations: 
+      maxProperties: 
+      minProperties: 
+      additionalPropertiesAllowed: false
+      additionalProperties: 
+      discriminator: 
+      example: 
+      enum: []
+      nullable: false
+      externalDocs: 
+      deprecated: false
+      xml: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+      annotations: 
+  responses: {}
+  parameters: {}
+  examples: {}
+  requestBodies: {}
+  headers: {}
+  securitySchemes:
+    Bearer:
+      type: ApiKey
+      description: 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"'
+      name: Authorization
+      in: Header
+      scheme: Bearer
+      bearerFormat: 
+      flows: 
+      openIdConnectUrl: 
+      extensions: {}
+      unresolvedReference: false
+      reference: 
+  links: {}
+  callbacks: {}
+  extensions: {}
+securityRequirements:
+- ? type: ApiKey
+    description: 
+    name: 
+    in: Query
+    scheme: 
+    bearerFormat: 
+    flows: 
+    openIdConnectUrl: 
+    extensions: {}
+    unresolvedReference: false
+    reference:
+      isFragrament: false
+      externalResource: 
+      type: SecurityScheme
+      id: Bearer
+      isExternal: false
+      isLocal: true
+      hostDocument: 
+      referenceV3: Bearer
+      referenceV2: Bearer
+  : []
+tags: []
+externalDocs: 
+extensions: {}
+hashCode: 3E71D03BC1D3228C5843536B5396D10C5C763757963883F420A5D6254D9400B6156B4A88833A4BD62C29FD96A8B2C1B18FA7BD9B4872EAE45DC8153ABE5C64CB
+annotations: 
