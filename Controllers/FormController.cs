@@ -18,25 +18,47 @@ namespace FormBuilder.API.Controllers
             _formManager = formManager;
         }
 
-        [HttpPost]
+        // -------------------- Form Configuration --------------------
+        [HttpPost("FormConfig")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult CreateForm([FromBody] FormLayoutDto dto)
+        public IActionResult CreateFormConfig([FromBody] FormConfigDto dto)
         {
             var adminUser = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Admin";
-            var result = _formManager.CreateForm(dto, adminUser);
+            var result = _formManager.CreateFormConfig(dto, adminUser);
             if (!result.Success) return BadRequest(result.Message);
             return Ok(result.Data);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("FormConfig/{id}")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult UpdateForm(string id, [FromBody] FormLayoutDto dto)
+        public IActionResult UpdateFormConfig(string id, [FromBody] FormConfigDto dto)
         {
-            var result = _formManager.UpdateForm(id, dto);
+            var result = _formManager.UpdateFormConfig(id, dto);
             if (!result.Success) return BadRequest(result.Message);
             return Ok(result.Data);
         }
 
+        // -------------------- Form Layout --------------------
+        [HttpPost("Layout")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult CreateFormLayout([FromBody] FormLayoutDto dto)
+        {
+            var adminUser = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Admin";
+            var result = _formManager.CreateFormLayout(dto, adminUser);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Data);
+        }
+
+        [HttpPut("Layout/{id}")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult UpdateFormLayout(string id, [FromBody] FormLayoutDto dto)
+        {
+            var result = _formManager.UpdateFormLayout(id, dto);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Data);
+        }
+
+        // -------------------- Common / Utility --------------------
         [HttpDelete("{id}")]
         [Authorize(Roles = Roles.Admin)]
         public IActionResult DeleteForm(string id)
@@ -63,13 +85,14 @@ namespace FormBuilder.API.Controllers
             return Ok(result.Data);
         }
 
-        [HttpGet("{id}/preview")]
+        [HttpPost("{id}/publish")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult PreviewForm(string id)
+        public IActionResult PublishForm(string id)
         {
-            var result = _formManager.PreviewForm(id);
+            var publishedBy = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Admin";
+            var result = _formManager.PublishForm(id, publishedBy);
             if (!result.Success) return BadRequest(result.Message);
-            return Ok(result.Data);
+            return Ok(result.Message);
         }
     }
 }

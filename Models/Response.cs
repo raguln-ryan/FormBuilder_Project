@@ -14,7 +14,7 @@ namespace FormBuilder.API.Models
         [ForeignKey("User")]
         public  int UserId { get; set; }  // Changed from string → int
 
-        public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? SubmittedAt { get; set; } 
 
         public List<ResponseDetail> Details { get; set; } = new List<ResponseDetail>();
 
