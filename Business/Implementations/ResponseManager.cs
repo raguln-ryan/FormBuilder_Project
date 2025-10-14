@@ -27,16 +27,18 @@ namespace FormBuilder.API.Business.Implementations
                 .Select(f => new FormLayoutDto
                 {
                     FormId = f.Id,
-    Title = f.Title,
-    Description = f.Description,
-    Status = (FormStatusDto)f.Status,
-    Questions = f.Questions.Select(q => new QuestionDto
-    {
-        Id = q.Id,
-        Text = q.Text,
-        Type = q.Type,
-        Options = q.Options?.ToArray() ?? Array.Empty<string>()
-    }).ToList()
+                    Title = f.Title,
+                    Description = f.Description,
+                    Status = (FormStatusDto)f.Status,
+                    Questions = f.Questions.Select(q => new QuestionDto
+                    {
+                        Id = q.QuestionId,
+                        Text = q.QuestionText,
+                        Type = q.Type,
+                        Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
+                        Required = q.Required,
+                        Description = q.DescriptionEnabled ? q.Description : null
+                    }).ToList()
                 }).ToList();
         }
 
@@ -72,10 +74,93 @@ namespace FormBuilder.API.Business.Implementations
             if (dto.Answers == null || !dto.Answers.Any())
                 return (false, "No answers provided.");
 
-            var responseDetails = dto.Answers.Select(a => new ResponseDetail
+            // Validate that all required questions are answered
+            var requiredQuestions = form.Questions.Where(q => q.Required).ToList();
+            foreach (var question in requiredQuestions)
             {
-                QuestionId = a.QuestionId,
-                Answer = a.Answer ?? string.Empty
+                var answer = dto.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                if (answer == null || string.IsNullOrWhiteSpace(answer.Answer))
+                {
+                    return (false, $"Question '{question.QuestionText}' is required.");
+                }
+            }
+
+            // Process and format answers based on question type
+            var responseDetails = dto.Answers.Select(a =>
+            {
+                var question = form.Questions.FirstOrDefault(q => q.QuestionId == a.QuestionId);
+                var formattedAnswer = a.Answer ?? string.Empty;
+
+                // Check if the question has options (checkbox, radio, dropdown, etc.)
+                if (question != null && question.Options != null && question.Options.Any())
+                {
+                    // Debug: Log what we have in Options
+                    System.Diagnostics.Debug.WriteLine($"Question: {question.QuestionText}");
+                    System.Diagnostics.Debug.WriteLine($"Options count: {question.Options.Count}");
+                    foreach (var opt in question.Options)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Option - ID: {opt.OptionId}, Value: {opt.Value}");
+                    }
+
+                    // Check if it's a multiple choice question (checkbox type)
+                    if (question.Type.ToLower() == "checkbox" || question.MultipleChoice)
+                    {
+                        // Parse the answer as multiple selections (comma-separated values)
+                        var selectedValues = a.Answer?.Split(',')
+                            .Select(val => val.Trim())
+                            .Where(val => !string.IsNullOrEmpty(val))
+                            .ToList();
+
+                        if (selectedValues != null && selectedValues.Any())
+                        {
+                            // Map selected values to their actual option IDs
+                            var selectedOptionIds = new List<string>();
+                            foreach (var value in selectedValues)
+                            {
+                                var option = question.Options.FirstOrDefault(o => o.Value == value);
+                                if (option != null && !string.IsNullOrEmpty(option.OptionId))
+                                {
+                                    // Use the actual OptionId with quotes
+                                    selectedOptionIds.Add($"\"{option.OptionId}\"");
+                                    System.Diagnostics.Debug.WriteLine($"Matched '{value}' to ID: {option.OptionId}");
+                                }
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"Could not find option for value: {value}");
+                                }
+                            }
+
+                            // Format as ["actualId1","actualId2","actualId3"]
+                            if (selectedOptionIds.Any())
+                            {
+                                formattedAnswer = $"[{string.Join(",", selectedOptionIds)}]";
+                            }
+                        }
+                    }
+                    else if (question.Type.ToLower() == "radio" || question.Type.ToLower() == "dropdown")
+                    {
+                        // For single selection, find the option ID for the selected value
+                        var selectedOption = question.Options.FirstOrDefault(o => o.Value == a.Answer);
+                        if (selectedOption != null && !string.IsNullOrEmpty(selectedOption.OptionId))
+                        {
+                            // Format as ["actualId"] with quotes
+                            formattedAnswer = $"[\"{selectedOption.OptionId}\"]";
+                            System.Diagnostics.Debug.WriteLine($"Single selection - Matched '{a.Answer}' to ID: {selectedOption.OptionId}");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Could not find option for single value: {a.Answer}");
+                        }
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Final formatted answer: {formattedAnswer}");
+                
+                return new ResponseDetail
+                {
+                    QuestionId = a.QuestionId,
+                    Answer = formattedAnswer
+                };
             }).ToList();
 
             var response = new Response

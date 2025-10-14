@@ -13,5 +13,11 @@ namespace FormBuilder.API.DTOs.Form
         public int? MaxLength { get; set; }
         public bool Enabled { get; set; } = true;
         
+        // Add these missing properties
+        public bool DescriptionEnabled { get; set; }
+        public bool SingleChoice { get; set; }
+        public bool MultipleChoice { get; set; }
+        public string? Format { get; set; }
+        public int Order { get; set; }
     }
 }

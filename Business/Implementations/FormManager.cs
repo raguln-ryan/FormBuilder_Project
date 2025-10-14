@@ -11,10 +11,12 @@ namespace FormBuilder.API.Business.Implementations
     public class FormManager : IFormManager
     {
         private readonly IFormRepository _formRepository;
+        private readonly IResponseRepository _responseRepository;
 
-        public FormManager(IFormRepository formRepository)
+        public FormManager(IFormRepository formRepository, IResponseRepository responseRepository)
         {
             _formRepository = formRepository;
+            _responseRepository = responseRepository;
         }
 
         // -------------------- Form Configuration --------------------
@@ -63,31 +65,37 @@ namespace FormBuilder.API.Business.Implementations
             var form = _formRepository.GetById(dto.FormId);
             if (form == null) return (false, "Form not found", null);
 
-            // CHECK: Prevent layout creation if form is already published
             if (form.Status == FormStatus.Published)
             {
                 return (false, "Cannot modify layout of a published form.", null);
             }
-            // Only update questions
-            form.Questions = dto.Questions?.Select(q => new Question
+            
+            // Use the values from input instead of calculating them
+            form.Questions = dto.Questions?.Select((q, index) => new Question
             {
-                Id = ObjectId.GenerateNewId().ToString(),  // CHANGE THIS LINE - Use ObjectId instead of Guid
-                Text = q.Text,
+                QuestionId = ObjectId.GenerateNewId().ToString(),
+                QuestionText = q.Text,
                 Type = q.Type,
-                Options = q.Options?.ToList() ?? new List<string>(),
+                DescriptionEnabled = q.DescriptionEnabled,  // ✅ Use input value
+                Description = q.Description ?? "",
+                SingleChoice = q.SingleChoice,              // ✅ Use input value
+                MultipleChoice = q.MultipleChoice,          // ✅ Use input value
+                Options = q.Options?.Select(opt => new Option
+                {
+                    OptionId = Guid.NewGuid().ToString(),
+                    Value = opt
+                }).ToList(),
+                Format = q.Format,                           // ✅ Use input value
                 Required = q.Required,
-                Description = q.Description,
-                MaxLength = q.MaxLength,
-                Enabled = q.Enabled,
-                CreatedBy = adminUser,  // This is stored in DB but not returned in response
-                CreatedAt = DateTime.UtcNow,  // This is stored in DB but not returned in response
-                UpdatedAt = DateTime.UtcNow  // This is stored in DB but not returned in response
+                Order = q.Order                              // ✅ Use input value
             }).ToList() ?? new List<Question>();
 
             form.UpdatedAt = DateTime.UtcNow;
+            form.UpdatedBy = adminUser;
+            
             _formRepository.Update(form);
 
-            // Return DTO without metadata fields
+            // Return response
             var responseDto = new FormLayoutDto
             {
                 FormId = form.Id,
@@ -96,15 +104,17 @@ namespace FormBuilder.API.Business.Implementations
                 Status = (FormStatusDto)form.Status,
                 Questions = form.Questions.Select(q => new QuestionDto
                 {
-                    Id = q.Id,
-                    Text = q.Text,
+                    Id = q.QuestionId,
+                    Text = q.QuestionText,
                     Type = q.Type,
-                    Options = q.Options?.ToArray() ?? Array.Empty<string>(),
+                    Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
                     Required = q.Required,
                     Description = q.Description,
-                    MaxLength = q.MaxLength,
-                    Enabled = q.Enabled
-                    // NO CreatedBy, CreatedAt, UpdatedAt in response!
+                    DescriptionEnabled = q.DescriptionEnabled,    // ✅ Return actual value
+                    SingleChoice = q.SingleChoice,                // ✅ Return actual value
+                    MultipleChoice = q.MultipleChoice,            // ✅ Return actual value
+                    Format = q.Format,                            // ✅ Return actual value
+                    Order = q.Order                               // ✅ Return actual value
                 }).ToList()
             };
 
@@ -114,11 +124,12 @@ namespace FormBuilder.API.Business.Implementations
         {
             var form = _formRepository.GetById(id);
             if (form == null) return (false, "Form not found", null);
-            // CHECK: Prevent update if form is published
+            
             if (form.Status == FormStatus.Published)
             {
                 return (false, "Cannot update layout of a published form.", null);
             }
+            
             if (!string.IsNullOrEmpty(dto.Title))
                 form.Title = dto.Title;
 
@@ -128,25 +139,32 @@ namespace FormBuilder.API.Business.Implementations
             if (dto.Status.HasValue)
                 form.Status = (FormStatus)dto.Status.Value;
 
-            form.Questions = dto.Questions?.Select(q => new Question
+            // Update questions with new model structure
+            form.Questions = dto.Questions?.Select((q, index) => new Question
             {
-                Id = q.Id ?? ObjectId.GenerateNewId().ToString(),  // CHANGE THIS LINE - Use ObjectId
-                Text = q.Text,
+                QuestionId = q.Id ?? ObjectId.GenerateNewId().ToString(),
+                QuestionText = q.Text,
                 Type = q.Type,
-                Options = q.Options?.ToList() ?? new List<string>(),
+                DescriptionEnabled = !string.IsNullOrEmpty(q.Description),
+                Description = q.Description ?? "",
+                SingleChoice = q.Type == "radio" || q.Type == "dropdown",
+                MultipleChoice = q.Type == "checkbox",
+                Options = q.Options?.Select(opt => new Option
+                {
+                    OptionId = Guid.NewGuid().ToString(),
+                    Value = opt
+                }).ToList(),
+                Format = q.Type == "date_picker" || q.Type == "datepicker" ? "MM/DD/YYYY" : null,
                 Required = q.Required,
-                Description = q.Description,
-                MaxLength = q.MaxLength,
-                Enabled = q.Enabled,
-                CreatedBy = form.Questions?.FirstOrDefault(eq => eq.Id == q.Id)?.CreatedBy ?? "system",
-                CreatedAt = form.Questions?.FirstOrDefault(eq => eq.Id == q.Id)?.CreatedAt ?? DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                Order = index
             }).ToList() ?? new List<Question>();
 
+            // Update FORM-level metadata only
             form.UpdatedAt = DateTime.UtcNow;
+            
             _formRepository.Update(form);
 
-            // Return WITHOUT metadata fields
+            // Return DTO
             var responseDto = new FormLayoutDto
             {
                 FormId = form.Id,
@@ -155,15 +173,12 @@ namespace FormBuilder.API.Business.Implementations
                 Status = (FormStatusDto)form.Status,
                 Questions = form.Questions.Select(q => new QuestionDto
                 {
-                    Id = q.Id,
-                    Text = q.Text,
+                    Id = q.QuestionId,
+                    Text = q.QuestionText,
                     Type = q.Type,
-                    Options = q.Options?.ToArray() ?? Array.Empty<string>(),
+                    Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
                     Required = q.Required,
-                    Description = q.Description,
-                    MaxLength = q.MaxLength,
-                    Enabled = q.Enabled
-                    // NO metadata fields in response!
+                    Description = q.DescriptionEnabled ? q.Description : null
                 }).ToList()
             };
 
@@ -177,8 +192,27 @@ namespace FormBuilder.API.Business.Implementations
             var form = _formRepository.GetById(id);
             if (form == null) return (false, "Form not found");
 
-            _formRepository.Delete(id);
-            return (true, "Form deleted successfully");
+            try
+            {
+                // First, delete all responses from MySQL that are associated with this form
+                var responses = _responseRepository.GetByFormId(id);
+                int deletedCount = 0;
+                
+                foreach (var response in responses)
+                {
+                    _responseRepository.Delete(response.Id.ToString());
+                    deletedCount++;
+                }
+
+                // Then delete the form from MongoDB
+                _formRepository.Delete(id);
+                
+                return (true, $"Form deleted successfully. {deletedCount} associated responses were also deleted.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error deleting form: {ex.Message}");
+            }
         }
 
         public object GetAllForms(ClaimsPrincipal user)
@@ -192,14 +226,12 @@ namespace FormBuilder.API.Business.Implementations
                 Status = (FormStatusDto)f.Status,
                 Questions = f.Questions?.Select(q => new QuestionDto
                 {
-                    Id = q.Id,
-                    Text = q.Text,
+                    Id = q.QuestionId,
+                    Text = q.QuestionText,
                     Type = q.Type,
-                    Options = q.Options?.ToArray() ?? Array.Empty<string>(),
+                    Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
                     Required = q.Required,
-                    Description = q.Description,
-                    MaxLength = q.MaxLength,
-                    Enabled = q.Enabled
+                    Description = q.DescriptionEnabled ? q.Description : null
                 }).ToList() ?? new List<QuestionDto>()
             }).ToList();
         }
@@ -217,14 +249,12 @@ namespace FormBuilder.API.Business.Implementations
                 Status = (FormStatusDto)form.Status,
                 Questions = form.Questions?.Select(q => new QuestionDto
                 {
-                    Id = q.Id,
-                    Text = q.Text,
+                    Id = q.QuestionId,
+                    Text = q.QuestionText,
                     Type = q.Type,
-                    Options = q.Options?.ToArray() ?? Array.Empty<string>(),
+                    Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
                     Required = q.Required,
-                    Description = q.Description,
-                    MaxLength = q.MaxLength,
-                    Enabled = q.Enabled
+                    Description = q.DescriptionEnabled ? q.Description : null
                 }).ToList() ?? new List<QuestionDto>()
             };
 
@@ -250,4 +280,3 @@ namespace FormBuilder.API.Business.Implementations
         }
     }
 }
-
