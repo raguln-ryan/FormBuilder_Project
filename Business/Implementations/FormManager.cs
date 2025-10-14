@@ -189,25 +189,45 @@ namespace FormBuilder.API.Business.Implementations
         // -------------------- Common / Utility --------------------
         public (bool Success, string Message) DeleteForm(string id)
         {
-            var form = _formRepository.GetById(id);
-            if (form == null) return (false, "Form not found");
-
             try
             {
-                // First, delete all responses from MySQL that are associated with this form
+                // Step 1: Validate form exists
+                var form = _formRepository.GetById(id);
+                if (form == null) 
+                    return (false, "Form not found");
+
+                // Step 2: Get all responses for this form
                 var responses = _responseRepository.GetByFormId(id);
-                int deletedCount = 0;
+                var responseCount = responses.Count();
+                
+                // Step 3: Delete all responses from MySQL
+                var deletedResponses = 0;
+                var failedDeletions = new List<string>();
                 
                 foreach (var response in responses)
                 {
-                    _responseRepository.Delete(response.Id.ToString());
-                    deletedCount++;
+                    try
+                    {
+                        _responseRepository.Delete(response.Id.ToString());
+                        deletedResponses++;
+                    }
+                    catch (Exception ex)
+                    {
+                        failedDeletions.Add($"ResponseId: {response.Id} - Error: {ex.Message}");
+                    }
                 }
 
-                // Then delete the form from MongoDB
+                // Step 4: If all responses deleted successfully, delete the form
+                if (failedDeletions.Any())
+                {
+                    return (false, $"Failed to delete some responses. Deleted {deletedResponses}/{responseCount} responses. " +
+                                   $"Errors: {string.Join("; ", failedDeletions)}. Form not deleted.");
+                }
+
+                // Step 5: Delete the form from MongoDB
                 _formRepository.Delete(id);
                 
-                return (true, $"Form deleted successfully. {deletedCount} associated responses were also deleted.");
+                return (true, $"Form and {deletedResponses} associated response(s) deleted successfully");
             }
             catch (Exception ex)
             {

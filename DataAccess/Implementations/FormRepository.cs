@@ -28,8 +28,14 @@ namespace FormBuilder.API.DataAccess.Implementations
         public void Update(Form form) =>
             _forms.ReplaceOne(f => f.Id == form.Id, form);
 
-        public void Delete(string id) =>
-            _forms.DeleteOne(f => f.Id == id);
+        public void Delete(string id)
+        {
+            var result = _forms.DeleteOne(f => f.Id == id);
+            if (result.DeletedCount == 0)
+            {
+                throw new InvalidOperationException($"Form with ID {id} could not be deleted or does not exist.");
+            }
+        }
 
         // -----------------------------
         // Create Config - Creates a new form with basic configuration
@@ -92,17 +98,51 @@ namespace FormBuilder.API.DataAccess.Implementations
         }
 
         // -----------------------------
-        // Optional: Delete form + all responses
+        // Delete form + all responses (Matches interface with void return)
         // -----------------------------
         public void DeleteFormAndResponses(string formId, IResponseRepository responseRepository)
         {
-            var responses = responseRepository.GetByFormId(formId);
-            foreach (var response in responses)
+            // Check if form exists
+            var form = GetById(formId);
+            if (form == null)
             {
-                responseRepository.Delete(response.Id.ToString());
+                throw new InvalidOperationException($"Form with ID {formId} not found");
             }
 
-            _forms.DeleteOne(f => f.Id == formId);
+            // Get and delete all responses
+            var responses = responseRepository.GetByFormId(formId);
+            var responseCount = 0;
+            var deletedCount = 0;
+            var failedDeletions = new List<string>();
+            
+            foreach (var response in responses)
+            {
+                responseCount++;
+                try
+                {
+                    responseRepository.Delete(response.Id.ToString());
+                    deletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    failedDeletions.Add($"ResponseId: {response.Id} - {ex.Message}");
+                }
+            }
+
+            // Only delete form if all responses were deleted successfully
+            if (responseCount > 0 && deletedCount != responseCount)
+            {
+                throw new InvalidOperationException(
+                    $"Only {deletedCount} of {responseCount} responses could be deleted. " +
+                    $"Failed deletions: {string.Join("; ", failedDeletions)}. Form not deleted.");
+            }
+
+            // Delete the form
+            var result = _forms.DeleteOne(f => f.Id == formId);
+            if (result.DeletedCount == 0)
+            {
+                throw new InvalidOperationException($"Failed to delete form with ID {formId}");
+            }
         }
 
         // -----------------------------
