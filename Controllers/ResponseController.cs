@@ -3,6 +3,8 @@ using FormBuilder.API.Business.Interfaces;
 using FormBuilder.API.DTOs.Form;
 using FormBuilder.API.Common;
 using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Linq;
 
 namespace FormBuilder.API.Controllers
 {
@@ -30,8 +32,15 @@ namespace FormBuilder.API.Controllers
         public IActionResult SubmitResponse([FromBody] FormSubmissionDto dto)
         {
             var result = _responseManager.SubmitResponse(dto, User);
-            if (!result.Success) return BadRequest(result.Message);
-            return Ok(result.Message);
+            
+            if (!result.Success) 
+                return BadRequest(new { success = false, message = result.Message });
+                
+            return Ok(new { 
+                success = true, 
+                message = result.Message,
+                responseId = result.Data?.Id 
+            });
         }
 
         [HttpGet("form/{formId}/responses")]
@@ -48,6 +57,42 @@ namespace FormBuilder.API.Controllers
         {
             var result = _responseManager.GetResponseById(responseId);
             if (!result.Success) return NotFound(result.Message);
+            return Ok(result.Data);
+        }
+
+        // New endpoint to download file
+        [HttpGet("{responseId}/file/{questionId}")]
+        [Authorize]
+        public IActionResult DownloadFile(string responseId, string questionId)
+        {
+            if (!int.TryParse(responseId, out int id))
+                return BadRequest(new { success = false, message = "Invalid response ID" });
+
+            var result = _responseManager.GetFileAttachment(id, questionId);
+            
+            if (!result.Success)
+                return NotFound(new { success = false, message = result.Message });
+
+            var file = result.Data;
+            
+            // Convert base64 to bytes and return as file
+            var bytes = Convert.FromBase64String(file.Base64Content);
+            return File(bytes, file.FileType, file.FileName);
+        }
+
+        // New endpoint to get response with file metadata
+        [HttpGet("{responseId}/details")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult GetResponseWithDetails(string responseId)
+        {
+            if (!int.TryParse(responseId, out int id))
+                return BadRequest(new { success = false, message = "Invalid response ID" });
+
+            var result = _responseManager.GetResponseWithFiles(id);
+            
+            if (!result.Success)
+                return NotFound(new { success = false, message = result.Message });
+
             return Ok(result.Data);
         }
     }

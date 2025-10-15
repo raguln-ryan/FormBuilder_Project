@@ -28,11 +28,14 @@ namespace FormBuilder.API.Configurations
             services.AddSingleton(new MongoDbContext(mongoConnectionString, mongoDatabaseName));
             services.AddScoped<MongoDbService>();
 
+            // Repository registrations
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IResponseRepository, ResponseRepository>();
             services.AddScoped<IFormRepository, FormRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IFileAttachmentRepository, FileAttachmentRepository>(); // THIS LINE MUST BE HERE
 
+            // Business Manager registrations
             services.AddScoped<IAuthManager, AuthManager>();
             services.AddScoped<IFormManager, FormManager>();
             services.AddScoped<IResponseManager, ResponseManager>();
