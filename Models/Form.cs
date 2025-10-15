@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using FormBuilder.API.DTOs.Form;
+
 namespace FormBuilder.API.Models
 {
 [BsonIgnoreExtraElements]
@@ -42,7 +42,6 @@ public class Form : MongoBaseEntity
     [BsonElement("questions")]
     public List<Question> Questions { get; set; } = new List<Question>();
         
-    // Remove this if not needed
-    public FormConfigDto? Config { get; set; }
+    // Removed Config property as it's not needed
 }
 }

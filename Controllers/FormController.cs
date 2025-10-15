@@ -21,7 +21,7 @@ namespace FormBuilder.API.Controllers
         // -------------------- Form Configuration --------------------
         [HttpPost("FormConfig")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult CreateFormConfig([FromBody] FormConfigDto dto)
+        public IActionResult CreateFormConfig([FromBody] FormConfigRequestDto dto)
         {
             var adminUser = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Admin";
             var result = _formManager.CreateFormConfig(dto, adminUser);
@@ -31,7 +31,7 @@ namespace FormBuilder.API.Controllers
 
         [HttpPut("FormConfig/{id}")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult UpdateFormConfig(string id, [FromBody] FormConfigDto dto)
+        public IActionResult UpdateFormConfig(string id, [FromBody] FormConfigRequestDto dto)
         {
             var result = _formManager.UpdateFormConfig(id, dto);
             if (!result.Success) return BadRequest(result.Message);
@@ -41,7 +41,7 @@ namespace FormBuilder.API.Controllers
         // -------------------- Form Layout --------------------
         [HttpPost("Layout")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult CreateFormLayout([FromBody] FormLayoutDto dto)
+        public IActionResult CreateFormLayout([FromBody] FormLayoutRequestDto dto)
         {
             var adminUser = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "Admin";
             var result = _formManager.CreateFormLayout(dto, adminUser);
@@ -51,7 +51,7 @@ namespace FormBuilder.API.Controllers
 
         [HttpPut("Layout/{id}")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult UpdateFormLayout(string id, [FromBody] FormLayoutDto dto)
+        public IActionResult UpdateFormLayout(string id, [FromBody] FormLayoutRequestDto dto)
         {
             var result = _formManager.UpdateFormLayout(id, dto);
             if (!result.Success) return BadRequest(result.Message);

@@ -16,6 +16,7 @@ namespace FormBuilder.API.Business.Interfaces
         // View a particular response by ID (Admin)
         (bool Success, string Message, Response? Data) GetResponseById(string responseId);
         
-        List<FormLayoutDto> GetPublishedForms();
+        // Get published forms - returns FormLayoutResponseDto
+        List<FormLayoutResponseDto> GetPublishedForms();
     }
 }

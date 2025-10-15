@@ -2,11 +2,18 @@ using System;
 
 namespace FormBuilder.API.DTOs.Form
 {
-    public class FormConfigDto
+    // Request DTO - Only Title and Description for input
+    public class FormConfigRequestDto
     {
-        public string? FormId { get; set; }  // Add this - will be populated in response
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public FormStatusDto Status { get; set; } = FormStatusDto.Draft;
+    }
+
+    // Response DTO - Includes FormId, Title, and Description
+    public class FormConfigResponseDto
+    {
+        public string FormId { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

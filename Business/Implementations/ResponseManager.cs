@@ -20,11 +20,11 @@ namespace FormBuilder.API.Business.Implementations
             _formRepository = formRepository;
         }
 
-        public List<FormLayoutDto> GetPublishedForms()
+        public List<FormLayoutResponseDto> GetPublishedForms()
         {
             return _formRepository
                 .GetByStatus(FormStatus.Published)
-                .Select(f => new FormLayoutDto
+                .Select(f => new FormLayoutResponseDto
                 {
                     FormId = f.Id,
                     Title = f.Title,
@@ -37,7 +37,12 @@ namespace FormBuilder.API.Business.Implementations
                         Type = q.Type,
                         Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
                         Required = q.Required,
-                        Description = q.DescriptionEnabled ? q.Description : null
+                        Description = q.DescriptionEnabled ? q.Description : null,
+                        DescriptionEnabled = q.DescriptionEnabled,
+                        SingleChoice = q.SingleChoice,
+                        MultipleChoice = q.MultipleChoice,
+                        Format = q.Format,
+                        Order = q.Order
                     }).ToList()
                 }).ToList();
         }
