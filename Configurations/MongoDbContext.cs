@@ -13,7 +13,7 @@ namespace FormBuilder.API.Configurations
             _database = client.GetDatabase(databaseName);
         }
 
-        public IMongoCollection<Form> Forms => _database.GetCollection<Form>("Forms");
-        public IMongoCollection<Question> Questions => _database.GetCollection<Question>("Questions");
+        public virtual IMongoCollection<Form> Forms => _database.GetCollection<Form>("Forms");
+        public virtual IMongoCollection<Question> Questions => _database.GetCollection<Question>("Questions");
     }
 }

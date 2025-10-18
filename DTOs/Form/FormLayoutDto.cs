@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 namespace FormBuilder.API.DTOs.Form
 {
-    // Request DTO - Only FormId and Questions for input
+    // Request DTO - Only Questions (no FormId since it comes from path)
     public class FormLayoutRequestDto
     {
-        public string FormId { get; set; } = string.Empty;
         public List<QuestionDto> Questions { get; set; } = new List<QuestionDto>();
     }
 
-    // Response DTO - Includes all fields
+    // Response DTO - Includes all fields from DB
     public class FormLayoutResponseDto
     {
         public string FormId { get; set; } = string.Empty;

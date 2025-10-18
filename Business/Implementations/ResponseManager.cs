@@ -18,9 +18,7 @@ namespace FormBuilder.API.Business.Implementations
         private readonly IFileAttachmentRepository _fileAttachmentRepository;
         private readonly MySqlDbContext _dbContext;
 
-        public ResponseManager(
-            IResponseRepository responseRepository, 
-            IFormRepository formRepository,
+        public ResponseManager(IResponseRepository responseRepository, IFormRepository formRepository,
             IFileAttachmentRepository fileAttachmentRepository,
             MySqlDbContext dbContext)
         {
