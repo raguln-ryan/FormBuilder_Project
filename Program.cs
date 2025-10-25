@@ -10,6 +10,19 @@ using System.Diagnostics.CodeAnalysis;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add CORS - ADD THIS SECTION
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:5174")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 builder.Services.AddDbContext<MySqlDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("MySqlConnection") ?? throw new Exception("MySQL connection string missing"),
@@ -69,8 +82,14 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Configure the HTTP request pipeline
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FormBuilder API v1"));
+
+// Add CORS middleware - IMPORTANT: Add this BEFORE authentication
+app.UseCors("AllowReactApp");
+
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
