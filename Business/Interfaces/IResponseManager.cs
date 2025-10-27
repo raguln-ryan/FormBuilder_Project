@@ -8,6 +8,7 @@ namespace FormBuilder.API.Business.Interfaces
         public interface IResponseManager
         {
             List<FormLayoutResponseDto> GetPublishedForms();
+            FormLayoutResponseDto GetFormById(string formId);
             IEnumerable<Response> GetResponsesByForm(string formId);
             (bool Success, string Message, Response? Data) GetResponseById(string responseId);
             (bool Success, string Message, Response? Data) SubmitResponse(FormSubmissionDto dto, ClaimsPrincipal user);

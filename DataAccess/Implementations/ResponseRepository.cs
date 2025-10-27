@@ -3,6 +3,7 @@ using FormBuilder.API.Models;
 using FormBuilder.API.Configurations;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace FormBuilder.API.DataAccess.Implementations
 {
@@ -50,20 +51,23 @@ namespace FormBuilder.API.DataAccess.Implementations
         }
         public IEnumerable<Response> GetByFormId(string formId)
         {
-            // No parsing needed
-            return _db.Responses
-                      .Where(r => r.FormId == formId) // compare string to string
-                      .Select(r => new Response
-                      {
-                          Id = r.Id,
-                          FormId = r.FormId,
-                          UserId = r.UserId,
-                          SubmittedAt = r.SubmittedAt,
-                          Details = _db.ResponseDetails
-                                       .Where(d => d.ResponseId == r.Id)
-                                       .ToList() ?? new List<ResponseDetail>()
-                      })
+            var responses = _db.Responses
+                      .Where(r => r.FormId == formId)
                       .ToList();
+    
+            // Explicitly load User data for each response
+            foreach (var response in responses)
+            {
+                // Load the User from the database
+                response.User = _db.Users.FirstOrDefault(u => u.Id == response.UserId);
+        
+                // Load the Details
+                response.Details = _db.ResponseDetails
+                             .Where(d => d.ResponseId == response.Id)
+                             .ToList();
+            }
+    
+            return responses;
         }
 
         public IEnumerable<Response> GetAll()

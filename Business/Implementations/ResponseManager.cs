@@ -55,6 +55,38 @@ namespace FormBuilder.API.Business.Implementations
                 }).ToList();
         }
 
+        // NEW METHOD - Get specific form by ID
+        public FormLayoutResponseDto GetFormById(string formId)
+        {
+            var form = _formRepository.GetById(formId);
+            
+            // Check if form exists and is published
+            if (form == null || form.Status != FormStatus.Published)
+                return null;
+            
+            return new FormLayoutResponseDto
+            {
+                FormId = form.Id,
+                Title = form.Title,
+                Description = form.Description,
+                Status = (FormStatusDto)form.Status,
+                Questions = form.Questions?.Select(q => new QuestionDto
+                {
+                    Id = q.QuestionId,
+                    Text = q.QuestionText,
+                    Type = q.Type,
+                    Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
+                    Required = q.Required,
+                    Description = q.DescriptionEnabled ? q.Description : null,
+                    DescriptionEnabled = q.DescriptionEnabled,
+                    SingleChoice = q.SingleChoice,
+                    MultipleChoice = q.MultipleChoice,
+                    Format = q.Format,
+                    Order = q.Order
+                }).ToList() ?? new List<QuestionDto>()
+            };
+        }
+
         public IEnumerable<Response> GetResponsesByForm(string formId) =>
             _responseRepository.GetByFormId(formId);
 
@@ -109,7 +141,7 @@ namespace FormBuilder.API.Business.Implementations
             foreach (var question in requiredQuestions)
             {
                 // Check if it's a file upload question
-                if (question.Type.ToLower() == "file" || question.Type.ToLower() == "fileupload")
+                if (question.Type.ToLower() == "file" || question.Type.ToLower() == "file_upload")
                 {
                     var hasFile = dto.FileUploads?.Any(f => f.QuestionId == question.QuestionId) ?? false;
                     if (!hasFile)
@@ -140,13 +172,6 @@ namespace FormBuilder.API.Business.Implementations
                     // Check if the question has options (checkbox, radio, dropdown, etc.)
                     if (question != null && question.Options != null && question.Options.Any())
                     {
-                        System.Diagnostics.Debug.WriteLine($"Question: {question.QuestionText}");
-                        System.Diagnostics.Debug.WriteLine($"Options count: {question.Options.Count}");
-                        foreach (var opt in question.Options)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Option - ID: {opt.OptionId}, Value: {opt.Value}");
-                        }
-
                         // Check if it's a multiple choice question (checkbox type)
                         if (question.Type.ToLower() == "checkbox" || question.MultipleChoice)
                         {
@@ -164,11 +189,6 @@ namespace FormBuilder.API.Business.Implementations
                                     if (option != null && !string.IsNullOrEmpty(option.OptionId))
                                     {
                                         selectedOptionIds.Add($"\"{option.OptionId}\"");
-                                        System.Diagnostics.Debug.WriteLine($"Matched '{value}' to ID: {option.OptionId}");
-                                    }
-                                    else
-                                    {
-                                        System.Diagnostics.Debug.WriteLine($"Could not find option for value: {value}");
                                     }
                                 }
 
@@ -178,22 +198,15 @@ namespace FormBuilder.API.Business.Implementations
                                 }
                             }
                         }
-                        else if (question.Type.ToLower() == "radio" || question.Type.ToLower() == "dropdown")
+                        else if (question.Type.ToLower() == "radio" || question.Type.ToLower() == "dropdown" || question.SingleChoice)
                         {
                             var selectedOption = question.Options.FirstOrDefault(o => o.Value == a.Answer);
                             if (selectedOption != null && !string.IsNullOrEmpty(selectedOption.OptionId))
                             {
                                 formattedAnswer = $"[\"{selectedOption.OptionId}\"]";
-                                System.Diagnostics.Debug.WriteLine($"Single selection - Matched '{a.Answer}' to ID: {selectedOption.OptionId}");
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Could not find option for single value: {a.Answer}");
                             }
                         }
                     }
-
-                    System.Diagnostics.Debug.WriteLine($"Final formatted answer: {formattedAnswer}");
                     
                     return new ResponseDetail
                     {
@@ -265,7 +278,7 @@ namespace FormBuilder.API.Business.Implementations
                     {
                         try
                         {
-                            _responseRepository.Delete(response.Id.ToString()); // Convert int to string
+                            _responseRepository.Delete(response.Id.ToString());
                         }
                         catch { /* Log error */ }
                     }
@@ -287,7 +300,6 @@ namespace FormBuilder.API.Business.Implementations
 
         public (bool Success, string Message, object? Data) GetResponseWithFiles(int responseId)
         {
-            // Convert int to string when calling GetById
             var response = _responseRepository.GetById(responseId.ToString());
             if (response == null)
                 return (false, "Response not found", null);

@@ -27,6 +27,19 @@ namespace FormBuilder.API.Controllers
             return Ok(forms);
         }
 
+        // NEW ENDPOINT - Get specific form for submission
+        [HttpGet("form/{formId}")]
+        [Authorize(Roles = Roles.Learner)]
+        public IActionResult GetFormForSubmission(string formId)
+        {
+            var form = _responseManager.GetFormById(formId);
+            
+            if (form == null)
+                return NotFound(new { success = false, message = "Form not found or not published" });
+                
+            return Ok(form);
+        }
+
         [HttpPost]
         [Authorize(Roles = Roles.Learner)]
         public IActionResult SubmitResponse([FromBody] FormSubmissionDto dto)
@@ -47,8 +60,25 @@ namespace FormBuilder.API.Controllers
         [Authorize(Roles = Roles.Admin)]
         public IActionResult GetResponsesByForm(string formId)
         {
-            var result = _responseManager.GetResponsesByForm(formId);
-            return Ok(result);
+            var responses = _responseManager.GetResponsesByForm(formId);
+            
+            // Format the response to include user details
+            var formattedResponses = responses.Select(r => new
+            {
+                id = r.Id,
+                formId = r.FormId,
+                userId = r.UserId,
+                submittedAt = r.SubmittedAt,
+                details = r.Details,
+                user = r.User != null ? new
+                {
+                    id = r.User.Id,
+                    name = r.User.Name,
+                    email = r.User.Email
+                } : null
+            });
+            
+            return Ok(formattedResponses);
         }
 
         [HttpGet("{responseId}")]
@@ -60,7 +90,6 @@ namespace FormBuilder.API.Controllers
             return Ok(result.Data);
         }
 
-        // New endpoint to download file
         [HttpGet("{responseId}/file/{questionId}")]
         [Authorize]
         public IActionResult DownloadFile(string responseId, string questionId)
@@ -75,12 +104,10 @@ namespace FormBuilder.API.Controllers
 
             var file = result.Data;
             
-            // Convert base64 to bytes and return as file
             var bytes = Convert.FromBase64String(file.Base64Content);
             return File(bytes, file.FileType, file.FileName);
         }
 
-        // New endpoint to get response with file metadata
         [HttpGet("{responseId}/details")]
         [Authorize(Roles = Roles.Admin)]
         public IActionResult GetResponseWithDetails(string responseId)

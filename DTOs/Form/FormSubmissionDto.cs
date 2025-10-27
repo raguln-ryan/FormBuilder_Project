@@ -11,7 +11,7 @@ namespace FormBuilder.API.DTOs.Form
 
     public class AnswerDto
     {
-        public string QuestionId { get; set; } = string.Empty;  // Must match Question.QuestionId
+        public string QuestionId { get; set; } = string.Empty;  // Matches Question.QuestionId
         public string? Answer { get; set; }
     }
 
