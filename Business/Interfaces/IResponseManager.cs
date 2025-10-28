@@ -14,5 +14,8 @@ namespace FormBuilder.API.Business.Interfaces
             (bool Success, string Message, Response? Data) SubmitResponse(FormSubmissionDto dto, ClaimsPrincipal user);
             (bool Success, string Message, FileAttachment? Data) GetFileAttachment(int responseId, string questionId);
             (bool Success, string Message, object? Data) GetResponseWithFiles(int responseId);
+        
+            // NEW METHOD - Get user's submissions
+            IEnumerable<object> GetUserSubmissions(int userId);
         }
 }

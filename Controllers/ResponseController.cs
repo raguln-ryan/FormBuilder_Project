@@ -40,6 +40,21 @@ namespace FormBuilder.API.Controllers
             return Ok(form);
         }
 
+        // NEW ENDPOINT - Get current user's submissions
+        [HttpGet("my-submissions")]
+        [Authorize(Roles = Roles.Learner)]
+        public IActionResult GetMySubmissions()
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                              ?? User.FindFirst("nameId")?.Value;
+            
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return BadRequest(new { success = false, message = "Invalid user" });
+
+            var submissions = _responseManager.GetUserSubmissions(userId);
+            return Ok(submissions);
+        }
+
         [HttpPost]
         [Authorize(Roles = Roles.Learner)]
         public IActionResult SubmitResponse([FromBody] FormSubmissionDto dto)

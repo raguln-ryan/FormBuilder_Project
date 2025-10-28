@@ -322,5 +322,38 @@ namespace FormBuilder.API.Business.Implementations
                 FileAttachments = files
             });
         }
+
+        public IEnumerable<object> GetUserSubmissions(int userId)
+        {
+            // Get all responses for this user
+            var userResponses = _responseRepository.GetByUserId(userId);
+            
+            var result = new List<object>();
+            
+            foreach (var response in userResponses)
+            {
+                // Get form details for each response
+                var form = _formRepository.GetById(response.FormId);
+                
+                result.Add(new
+                {
+                    id = response.Id,
+                    formId = response.FormId,
+                    formTitle = form?.Title ?? "Unknown Form",
+                    formDescription = form?.Description ?? "",
+                    submittedAt = response.SubmittedAt,
+                    status = "submitted", // You can add actual status logic here
+                    userId = response.UserId,
+                    questionCount = form?.Questions?.Count ?? 0,
+                    details = response.Details?.Select(d => new
+                    {
+                        questionId = d.QuestionId,
+                        answer = d.Answer
+                    }).ToList()
+                });
+            }
+            
+            return result.OrderByDescending(r => ((dynamic)r).submittedAt);
+        }
     }
 }

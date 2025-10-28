@@ -185,34 +185,13 @@ namespace FormBuilder.API.Business.Implementations
                 if (form == null) 
                     return (false, "Form not found");
 
-                var responses = _responseRepository.GetByFormId(id);
-                var responseCount = responses.Count();
-                
-                var deletedResponses = 0;
-                var failedDeletions = new List<string>();
-                
-                foreach (var response in responses)
-                {
-                    try
-                    {
-                        _responseRepository.Delete(response.Id.ToString());
-                        deletedResponses++;
-                    }
-                    catch (Exception ex)
-                    {
-                        failedDeletions.Add($"ResponseId: {response.Id} - Error: {ex.Message}");
-                    }
-                }
-
-                if (failedDeletions.Any())
-                {
-                    return (false, $"Failed to delete some responses. Deleted {deletedResponses}/{responseCount} responses. " +
-                                   $"Errors: {string.Join("; ", failedDeletions)}. Form not deleted.");
-                }
-
+                // Delete all responses in one operation
+                var deletedResponseCount = _responseRepository.DeleteAllByFormId(id);
+        
+                // Now delete the form
                 _formRepository.Delete(id);
-                
-                return (true, $"Form and {deletedResponses} associated response(s) deleted successfully");
+        
+                return (true, $"Form and {deletedResponseCount} response(s) deleted successfully");
             }
             catch (Exception ex)
             {

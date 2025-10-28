@@ -118,5 +118,39 @@ namespace FormBuilder.API.DataAccess.Implementations
             }
         }
 
+        public int DeleteAllByFormId(string formId)
+        {
+            var responses = _db.Responses.Where(r => r.FormId == formId).ToList();
+            var count = responses.Count;
+        
+            if (count > 0)
+            {
+                _db.Responses.RemoveRange(responses);
+                _db.SaveChanges();
+            }
+        
+            return count;
+        }
+
+        public IEnumerable<Response> GetByUserId(int userId)
+        {
+            var responses = _db.Responses
+                      .Where(r => r.UserId == userId)
+                      .ToList();
+    
+            // Load related data for each response
+            foreach (var response in responses)
+            {
+                // Load the User
+                response.User = _db.Users.FirstOrDefault(u => u.Id == response.UserId);
+        
+                // Load the Details
+                response.Details = _db.ResponseDetails
+                          .Where(d => d.ResponseId == response.Id)
+                          .ToList();
+            }
+    
+            return responses.OrderByDescending(r => r.SubmittedAt);
+        }
     }
 }
