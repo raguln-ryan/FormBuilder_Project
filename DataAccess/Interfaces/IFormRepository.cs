@@ -25,5 +25,8 @@ namespace FormBuilder.API.DataAccess.Interfaces
         void UpdateConfig(string formId, string title, string description);
         void UpdateLayout(string formId, List<Question> questions);
         void PublishForm(string formId, string publishedBy, System.DateTime publishedAt);
+
+        // Add new method for paginated forms
+        (IEnumerable<Form> Forms, int TotalCount) GetPaginatedForms(int skip, int take, string searchTerm = null);
     }
 }

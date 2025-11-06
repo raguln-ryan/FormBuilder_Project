@@ -1,4 +1,5 @@
 using FormBuilder.API.DTOs.Form;
+using FormBuilder.API.DTOs.Common;
 using System.Security.Claims;
 
 namespace FormBuilder.API.Business.Interfaces
@@ -14,7 +15,7 @@ namespace FormBuilder.API.Business.Interfaces
 
         // Common operations
         (bool Success, string Message) DeleteForm(string id);
-        (bool Success, string Message, object Data) GetAllForms(ClaimsPrincipal user, int offset = 0, int limit = 10);
+        (bool Success, string Message, PaginatedResponse<FormLayoutResponseDto> Data) GetAllForms(ClaimsPrincipal user, int pageNumber = 1, int pageSize = 10, string searchTerm = null);
         (bool Success, string Message, FormLayoutResponseDto? Data) GetFormById(string id, ClaimsPrincipal user);
         (bool Success, string Message) PublishForm(string id, string publishedBy);
     }

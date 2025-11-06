@@ -1,6 +1,7 @@
 using FormBuilder.API.Business.Interfaces;
 using FormBuilder.API.DataAccess.Interfaces;
 using FormBuilder.API.DTOs.Form;
+using FormBuilder.API.DTOs.Common;
 using FormBuilder.API.Models;
 using FormBuilder.API.Configurations;
 using System.Security.Claims;
@@ -28,42 +29,81 @@ namespace FormBuilder.API.Business.Implementations
             _dbContext = dbContext;
         }
 
-        public List<FormLayoutResponseDto> GetPublishedForms()
+        public (bool Success, string Message, PaginatedResponse<FormLayoutResponseDto> Data) GetPublishedForms(int pageNumber = 1, int pageSize = 10, string searchTerm = null)
         {
-            return _formRepository
-                .GetByStatus(FormStatus.Published)
-                .Select(f => new FormLayoutResponseDto
+            try
+            {
+                // Validate pagination parameters
+                if (pageNumber < 1) pageNumber = 1;
+                if (pageSize <= 0) pageSize = 10;
+                if (pageSize > 100) pageSize = 100;
+
+                // Get published forms
+                var publishedForms = _formRepository.GetByStatus(FormStatus.Published);
+
+                // Apply search filter
+                if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    FormId = f.Id,
-                    Title = f.Title,
-                    Description = f.Description,
-                    Status = (FormStatusDto)f.Status,
-                    Questions = f.Questions.Select(q => new QuestionDto
+                    searchTerm = searchTerm.ToLower();
+                    publishedForms = publishedForms.Where(f => 
+                        f.Title.ToLower().Contains(searchTerm) || 
+                        f.Description.ToLower().Contains(searchTerm)
+                    );
+                }
+
+                var totalCount = publishedForms.Count();
+                
+                // Calculate skip amount
+                var skip = (pageNumber - 1) * pageSize;
+
+                // Apply pagination
+                var paginatedForms = publishedForms
+                    .OrderByDescending(f => f.PublishedAt ?? f.UpdatedAt)
+                    .Skip(skip)
+                    .Take(pageSize)
+                    .Select(f => new FormLayoutResponseDto
                     {
-                        Id = q.QuestionId,
-                        Text = q.QuestionText,
-                        Type = q.Type,
-                        Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
-                        Required = q.Required,
-                        Description = q.DescriptionEnabled ? q.Description : null,
-                        DescriptionEnabled = q.DescriptionEnabled,
-                        SingleChoice = q.SingleChoice,
-                        MultipleChoice = q.MultipleChoice,
-                        Format = q.Format,
-                        Order = q.Order
-                    }).ToList()
-                }).ToList();
+                        FormId = f.Id,
+                        Title = f.Title,
+                        Description = f.Description,
+                        Status = (FormStatusDto)f.Status,
+                        CreatedAt = f.CreatedAt,
+                        Questions = f.Questions.Select(q => new QuestionDto
+                        {
+                            Id = q.QuestionId,
+                            Text = q.QuestionText,
+                            Type = q.Type,
+                            Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
+                            Required = q.Required,
+                            Description = q.DescriptionEnabled ? q.Description : null,
+                            DescriptionEnabled = q.DescriptionEnabled,
+                            SingleChoice = q.SingleChoice,
+                            MultipleChoice = q.MultipleChoice,
+                            Format = q.Format,
+                            Order = q.Order
+                        }).ToList()
+                    }).ToList();
+
+                // Use PaginatedResponse helper class
+                var response = new PaginatedResponse<FormLayoutResponseDto>(paginatedForms, totalCount);
+                
+                return (true, "Published forms retrieved successfully", response);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error retrieving published forms: {ex.Message}", null);
+            }
         }
 
         // NEW METHOD - Get specific form by ID
         public FormLayoutResponseDto GetFormById(string formId)
         {
             var form = _formRepository.GetById(formId);
-            
+
             // Check if form exists and is published
             if (form == null || form.Status != FormStatus.Published)
                 return null;
-            
+
             return new FormLayoutResponseDto
             {
                 FormId = form.Id,
@@ -87,8 +127,63 @@ namespace FormBuilder.API.Business.Implementations
             };
         }
 
-        public IEnumerable<Response> GetResponsesByForm(string formId) =>
-            _responseRepository.GetByFormId(formId);
+        public (bool Success, string Message, PaginatedResponse<object> Data) GetResponsesByForm(string formId, int pageNumber = 1, int pageSize = 10, string searchTerm = null)
+        {
+            try
+            {
+                // Validate pagination
+                if (pageNumber < 1) pageNumber = 1;
+                if (pageSize <= 0) pageSize = 10;
+                if (pageSize > 100) pageSize = 100;
+
+                // Get responses and convert to list immediately
+                IEnumerable<Response> allResponses = _responseRepository.GetByFormId(formId);
+                var responsesList = allResponses.ToList();
+
+                // Apply search filter if provided
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    searchTerm = searchTerm.ToLower();
+                    responsesList = responsesList.Where(r =>
+                        (r.User?.Name?.ToLower().Contains(searchTerm) ?? false) ||
+                        (r.User?.Email?.ToLower().Contains(searchTerm) ?? false) ||
+                        r.UserId.ToString().Contains(searchTerm) ||
+                        (r.Details?.Any(d => d.Answer?.ToLower().Contains(searchTerm) ?? false) ?? false)
+                    ).ToList();
+                }
+
+                var totalCount = responsesList.Count();
+                var skip = (pageNumber - 1) * pageSize;
+
+                // Create anonymous objects and cast to object
+                var paginatedData = responsesList
+                    .OrderByDescending(r => r.SubmittedAt)
+                    .Skip(skip)
+                    .Take(pageSize)
+                    .Select(r => (object)new  // Cast directly here
+                    {
+                        id = r.Id,
+                        formId = r.FormId,
+                        userId = r.UserId,
+                        submittedAt = r.SubmittedAt,
+                        details = r.Details,
+                        user = r.User != null ? new
+                        {
+                            id = r.User.Id,
+                            name = r.User.Name,
+                            email = r.User.Email
+                        } : null
+                    })
+                    .ToList();
+
+                var result = new PaginatedResponse<object>(paginatedData, totalCount);
+                return (true, "Responses retrieved successfully", result);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error retrieving responses: {ex.Message}", null);
+            }
+        }
 
         public (bool Success, string Message, Response? Data) GetResponseById(string responseId)
         {
@@ -120,10 +215,10 @@ namespace FormBuilder.API.Business.Implementations
             if (dto.FileUploads != null && dto.FileUploads.Any())
             {
                 const long maxFileSizeInBytes = 5 * 1024 * 1024; // 5MB
-                var allowedTypes = new[] { 
-                    "image/jpeg", "image/jpg", "image/png", "image/gif", 
-                    "application/pdf", "application/msword", 
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
+                var allowedTypes = new[] {
+                    "image/jpeg", "image/jpg", "image/png", "image/gif",
+                    "application/pdf", "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 };
 
                 foreach (var file in dto.FileUploads)
@@ -161,7 +256,7 @@ namespace FormBuilder.API.Business.Implementations
 
             // Process and format answers based on question type
             var responseDetails = new List<ResponseDetail>();
-            
+
             if (dto.Answers != null)
             {
                 responseDetails = dto.Answers.Select(a =>
@@ -207,7 +302,7 @@ namespace FormBuilder.API.Business.Implementations
                             }
                         }
                     }
-                    
+
                     return new ResponseDetail
                     {
                         QuestionId = a.QuestionId,
@@ -272,7 +367,7 @@ namespace FormBuilder.API.Business.Implementations
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    
+
                     // Try to delete the response if it was saved
                     if (response.Id > 0)
                     {
@@ -323,37 +418,71 @@ namespace FormBuilder.API.Business.Implementations
             });
         }
 
-        public IEnumerable<object> GetUserSubmissions(int userId)
+        public (bool Success, string Message, PaginatedResponse<object> Data) GetUserSubmissions(int userId, int pageNumber = 1, int pageSize = 10, string searchTerm = null)
         {
-            // Get all responses for this user
-            var userResponses = _responseRepository.GetByUserId(userId);
-            
-            var result = new List<object>();
-            
-            foreach (var response in userResponses)
+            try
             {
-                // Get form details for each response
-                var form = _formRepository.GetById(response.FormId);
-                
-                result.Add(new
+                // Validate pagination
+                if (pageNumber < 1) pageNumber = 1;
+                if (pageSize <= 0) pageSize = 10;
+                if (pageSize > 100) pageSize = 100;
+
+                // Get all responses for this user
+                var userResponses = _responseRepository.GetByUserId(userId);
+
+                // Prepare result with form details
+                var submissions = new List<object>();
+                foreach (var userResponse in userResponses)
                 {
-                    id = response.Id,
-                    formId = response.FormId,
-                    formTitle = form?.Title ?? "Unknown Form",
-                    formDescription = form?.Description ?? "",
-                    submittedAt = response.SubmittedAt,
-                    status = "submitted", // You can add actual status logic here
-                    userId = response.UserId,
-                    questionCount = form?.Questions?.Count ?? 0,
-                    details = response.Details?.Select(d => new
+                    var form = _formRepository.GetById(userResponse.FormId);
+                    submissions.Add(new
                     {
-                        questionId = d.QuestionId,
-                        answer = d.Answer
-                    }).ToList()
-                });
+                        id = userResponse.Id,
+                        formId = userResponse.FormId,
+                        formTitle = form?.Title ?? "Unknown Form",
+                        formDescription = form?.Description ?? "",
+                        submittedAt = userResponse.SubmittedAt,
+                        status = "submitted",
+                        userId = userResponse.UserId,
+                        questionCount = form?.Questions?.Count ?? 0,
+                        details = userResponse.Details?.Select(d => new
+                        {
+                            questionId = d.QuestionId,
+                            answer = d.Answer
+                        }).ToList()
+                    });
+                }
+
+                // Apply search filter if provided
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    searchTerm = searchTerm.ToLower();
+                    submissions = submissions.Where(s =>
+                    {
+                        dynamic sub = s;
+                        return sub.formTitle.ToString().ToLower().Contains(searchTerm) ||
+                               sub.formDescription.ToString().ToLower().Contains(searchTerm);
+                    }).ToList();
+                }
+
+                var totalCount = submissions.Count;
+                var skip = (pageNumber - 1) * pageSize;
+
+                // Apply pagination
+                var paginatedSubmissions = submissions
+                    .OrderByDescending(s => ((dynamic)s).submittedAt)
+                    .Skip(skip)
+                    .Take(pageSize)
+                    .ToList();
+
+                var response = new PaginatedResponse<object>(paginatedSubmissions, totalCount);
+
+                return (true, "Submissions retrieved successfully", response);
             }
-            
-            return result.OrderByDescending(r => ((dynamic)r).submittedAt);
+            catch (Exception ex)
+            {
+                return (false, $"Error retrieving submissions: {ex.Message}", null);
+            }
         }
     }
 }

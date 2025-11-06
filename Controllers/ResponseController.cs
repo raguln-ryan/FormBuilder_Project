@@ -21,10 +21,14 @@ namespace FormBuilder.API.Controllers
 
         [HttpGet("published")]
         [Authorize(Roles = Roles.Learner)]
-        public IActionResult GetPublishedForms()
+        public IActionResult GetPublishedForms(
+            [FromQuery] int page = 1,
+            [FromQuery] int size = 10,
+            [FromQuery] string search = null)
         {
-            var forms = _responseManager.GetPublishedForms();
-            return Ok(forms);
+            var result = _responseManager.GetPublishedForms(page, size, search);
+            if (!result.Success) return BadRequest(result.Message);
+            return Ok(result.Data);
         }
 
         // NEW ENDPOINT - Get specific form for submission
@@ -43,7 +47,10 @@ namespace FormBuilder.API.Controllers
         // NEW ENDPOINT - Get current user's submissions
         [HttpGet("my-submissions")]
         [Authorize(Roles = Roles.Learner)]
-        public IActionResult GetMySubmissions()
+        public IActionResult GetMySubmissions(
+            [FromQuery] int page = 1,
+            [FromQuery] int size = 10,
+            [FromQuery] string search = null)
         {
             var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
                               ?? User.FindFirst("nameId")?.Value;
@@ -51,8 +58,12 @@ namespace FormBuilder.API.Controllers
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
                 return BadRequest(new { success = false, message = "Invalid user" });
 
-            var submissions = _responseManager.GetUserSubmissions(userId);
-            return Ok(submissions);
+            var result = _responseManager.GetUserSubmissions(userId, page, size, search);
+            
+            if (!result.Success) 
+                return BadRequest(result.Message);
+            
+            return Ok(result.Data);
         }
 
         [HttpPost]
@@ -73,27 +84,18 @@ namespace FormBuilder.API.Controllers
 
         [HttpGet("form/{formId}/responses")]
         [Authorize(Roles = Roles.Admin)]
-        public IActionResult GetResponsesByForm(string formId)
+        public IActionResult GetResponsesByForm(
+            string formId,
+            [FromQuery] int page = 1,
+            [FromQuery] int size = 10,
+            [FromQuery] string search = null)
         {
-            var responses = _responseManager.GetResponsesByForm(formId);
+            var result = _responseManager.GetResponsesByForm(formId, page, size, search);
             
-            // Format the response to include user details
-            var formattedResponses = responses.Select(r => new
-            {
-                id = r.Id,
-                formId = r.FormId,
-                userId = r.UserId,
-                submittedAt = r.SubmittedAt,
-                details = r.Details,
-                user = r.User != null ? new
-                {
-                    id = r.User.Id,
-                    name = r.User.Name,
-                    email = r.User.Email
-                } : null
-            });
+            if (!result.Success) 
+                return BadRequest(result.Message);
             
-            return Ok(formattedResponses);
+            return Ok(result.Data);
         }
 
         [HttpGet("{responseId}")]

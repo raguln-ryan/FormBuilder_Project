@@ -83,18 +83,22 @@ public class FormController : ControllerBase
     }
 
     /// <summary>
-    /// Gets all forms with pagination support
+    /// Gets all forms with pagination and search support
     /// </summary>
     /// <param name="offset">Number of items to skip (default: 0)</param>
     /// <param name="limit">Number of items to retrieve (default: 10, max: 100)</param>
+    /// <param name="search">Search term to filter forms by title, description, or questions</param>
     /// <returns>Paginated list of forms</returns>
     /// <response code="200">Forms retrieved successfully</response>
     /// <response code="401">Unauthorized</response>
     [HttpGet]
     [Authorize]
-    public IActionResult GetAllForms([FromQuery] int offset = 0, [FromQuery] int limit = 10)
+    public IActionResult GetAllForms(
+        [FromQuery] int page = 1, 
+        [FromQuery] int size = 10,
+        [FromQuery] string search = null)
     {
-        var result = _formManager.GetAllForms(User, offset, limit);
+        var result = _formManager.GetAllForms(User, page, size, search);
         if (!result.Success) return BadRequest(result.Message);
         return Ok(result.Data);
     }

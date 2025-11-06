@@ -2,6 +2,7 @@ using FormBuilder.API.DataAccess.Interfaces;
 using FormBuilder.API.Models;
 using FormBuilder.API.Configurations;
 using MongoDB.Driver;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 
@@ -35,6 +36,50 @@ namespace FormBuilder.API.DataAccess.Implementations
             {
                 throw new InvalidOperationException($"Form with ID {id} could not be deleted or does not exist.");
             }
+        }
+
+        // -----------------------------
+        // NEW METHOD: Get Paginated Forms with Filtering at MongoDB level
+        // -----------------------------
+        public (IEnumerable<Form> Forms, int TotalCount) GetPaginatedForms(int skip, int take, string searchTerm = null)
+        {
+            var filterBuilder = Builders<Form>.Filter;
+            var filter = filterBuilder.Empty;
+
+            // Build search filter if search term is provided
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var searchRegex = new BsonRegularExpression(searchTerm, "i"); // case-insensitive
+                
+                // Create filters for each field
+                var titleFilter = filterBuilder.Regex(f => f.Title, searchRegex);
+                // var descriptionFilter = filterBuilder.Regex(f => f.Description, searchRegex);
+                
+                // For nested questions search
+                // var questionTextFilter = filterBuilder.ElemMatch(f => f.Questions,
+                //     Builders<Question>.Filter.Regex(q => q.QuestionText, searchRegex));
+                
+                // var questionDescFilter = filterBuilder.ElemMatch(f => f.Questions,
+                //     Builders<Question>.Filter.Regex(q => q.Description, searchRegex));
+
+                // Combine all filters with OR
+                filter = filterBuilder.Or(
+                    titleFilter
+                );
+            }
+
+            // Get total count with filter applied
+            var totalCount = (int)_forms.CountDocuments(filter);
+
+            // Get paginated results with filter, sorted by UpdatedAt descending
+            var forms = _forms
+                .Find(filter)
+                .SortByDescending(f => f.UpdatedAt)
+                .Skip(skip)
+                .Limit(take)
+                .ToList();
+
+            return (forms, totalCount);
         }
 
         // -----------------------------

@@ -1,6 +1,7 @@
 using FormBuilder.API.Business.Interfaces;
 using FormBuilder.API.DataAccess.Interfaces;
 using FormBuilder.API.DTOs.Form;
+using FormBuilder.API.DTOs.Common;
 using FormBuilder.API.Models;
 using System;
 using System.Linq;
@@ -199,64 +200,50 @@ namespace FormBuilder.API.Business.Implementations
             }
         }
 
-        public (bool Success, string Message, object Data) GetAllForms(ClaimsPrincipal user, int offset = 0, int limit = 10)
+        public (bool Success, string Message, PaginatedResponse<FormLayoutResponseDto> Data) GetAllForms(ClaimsPrincipal user, int pageNumber = 1, int pageSize = 10, string searchTerm = null)
         {
             try
             {
                 // Validate pagination parameters
-                if (offset < 0) offset = 0;
-                if (limit <= 0) limit = 10;
-                if (limit > 100) limit = 100; // Maximum limit to prevent excessive data retrieval
+                if (pageNumber < 1) pageNumber = 1;
+                if (pageSize <= 0) pageSize = 10;
+                if (pageSize > 100) pageSize = 100;
 
-                // Get all forms from repository
-                var allForms = _formRepository.GetAll();
-                
-                // Get total count before pagination
-                var totalCount = allForms.Count();
+                // Calculate skip amount
+                var skip = (pageNumber - 1) * pageSize;
 
-                // Apply pagination
-                var paginatedForms = allForms
-                    .Skip(offset)
-                    .Take(limit)
-                    .Select(f => new FormLayoutResponseDto
-                    {
-                        FormId = f.Id,
-                        Title = f.Title,
-                        Description = f.Description,
-                        Status = (FormStatusDto)f.Status,
-                        Questions = f.Questions?.Select(q => new QuestionDto
-                        {
-                            Id = q.QuestionId,
-                            Text = q.QuestionText,
-                            Type = q.Type,
-                            Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
-                            Required = q.Required,
-                            Description = q.DescriptionEnabled ? q.Description : null,
-                            DescriptionEnabled = q.DescriptionEnabled,
-                            SingleChoice = q.SingleChoice,
-                            MultipleChoice = q.MultipleChoice,
-                            Format = q.Format,
-                            Order = q.Order
-                        }).ToList() ?? new List<QuestionDto>()
-                    }).ToList();
+                // Get paginated and filtered forms directly from MongoDB
+                var (forms, totalCount) = _formRepository.GetPaginatedForms(skip, pageSize, searchTerm);
 
-                // Create paginated response
-                var paginatedResponse = new
+                // Map to DTOs
+                var formDtos = forms.Select(f => new FormLayoutResponseDto
                 {
-                    data = paginatedForms,
-                    pagination = new
+                    FormId = f.Id,
+                    Title = f.Title,
+                    Description = f.Description,
+                    Status = (FormStatusDto)f.Status,
+                    CreatedAt = f.CreatedAt,
+            
+                    Questions = f.Questions?.Select(q => new QuestionDto
                     {
-                        offset = offset,
-                        limit = limit,
-                        total = totalCount,
-                        hasNext = (offset + limit) < totalCount,
-                        hasPrevious = offset > 0,
-                        nextOffset = (offset + limit) < totalCount ? offset + limit : (int?)null,
-                        previousOffset = offset - limit >= 0 ? offset - limit : (int?)null
-                    }
-                };
+                        Id = q.QuestionId,
+                        Text = q.QuestionText,
+                        Type = q.Type,
+                        Options = q.Options?.Select(o => o.Value).ToArray() ?? Array.Empty<string>(),
+                        Required = q.Required,
+                        Description = q.DescriptionEnabled ? q.Description : null,
+                        DescriptionEnabled = q.DescriptionEnabled,
+                        SingleChoice = q.SingleChoice,
+                        MultipleChoice = q.MultipleChoice,
+                        Format = q.Format,
+                        Order = q.Order
+                    }).ToList() ?? new List<QuestionDto>()
+                }).ToList();
 
-                return (true, "Forms retrieved successfully", paginatedResponse);
+                // Use PaginatedResponse helper class
+                var response = new PaginatedResponse<FormLayoutResponseDto>(formDtos, totalCount);
+
+                return (true, "Forms retrieved successfully", response);
             }
             catch (Exception ex)
             {
